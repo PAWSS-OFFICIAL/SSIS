@@ -170,7 +170,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
-        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' http://localhost:8000 https://*.onrender.com;"
+        response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' http://localhost:8000 https://*.onrender.com https://*.railway.app https://*.pages.dev *;"
         return response
 
 app.add_middleware(SecurityHeadersMiddleware)
@@ -5409,27 +5409,6 @@ async def get_low_bandwidth_content(
     }
 
 
-# Include the router
-app.include_router(api_router)
-
-# Mount React build for single-server execution (Serverless-like behavior)
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
-
-build_dir = ROOT_DIR.parent / "build"
-if build_dir.exists():
-    # Serve static assets (js, css, media)
-    app.mount("/static", StaticFiles(directory=str(build_dir / "static")), name="static")
-    
-    # Catch-all route to serve the React app or static files in the build root
-    @app.get("/{full_path:path}")
-    async def serve_react_app(full_path: str):
-        file_path = build_dir / full_path
-        # Return exact file if it exists (e.g., manifest.json, favicon.ico, logos)
-        if file_path.is_file():
-            return FileResponse(str(file_path))
-        # Otherwise, let React Router handle it via index.html
-        return FileResponse(str(build_dir / "index.html"))
 
 # Note: Logging is configured at the top of the file
 
@@ -5529,3 +5508,29 @@ async def send_announcement(ann: AnnouncementCreate, token: dict = Depends(requi
             # MOCK WHATSAPP SENDING HERE
             print(f"[MOCK WHATSAPP] Sent to Class {ann.target_class_id} Section {ann.target_section_id}: {ann.message}")
             return {"message": "Announcement sent"}
+
+# ==========================================
+# FINAL APP MOUNTING & ROUTING
+# ==========================================
+
+# Include the router
+app.include_router(api_router)
+
+# Mount React build for single-server execution (Serverless-like behavior)
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+build_dir = ROOT_DIR.parent / "build"
+if build_dir.exists():
+    # Serve static assets (js, css, media)
+    app.mount("/static", StaticFiles(directory=str(build_dir / "static")), name="static")
+    
+    # Catch-all route to serve the React app or static files in the build root
+    @app.get("/{full_path:path}")
+    async def serve_react_app(full_path: str):
+        file_path = build_dir / full_path
+        # Return exact file if it exists (e.g., manifest.json, favicon.ico, logos)
+        if file_path.is_file():
+            return FileResponse(str(file_path))
+        # Otherwise, let React Router handle it via index.html
+        return FileResponse(str(build_dir / "index.html"))

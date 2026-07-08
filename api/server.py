@@ -1694,7 +1694,9 @@ async def delete_course(course_id: int, token: dict = Depends(require_role('Admi
 
 
 @api_router.get("/courses/class-teacher")
-async def get_class_teacher(class_id: int, section_id: int, token: dict = Depends(verify_token)):
+async def get_class_teacher(class_id: str, section_id: str, token: dict = Depends(verify_token)):
+    if class_id == "null": return None
+    if section_id == "null": return None
     with get_db_connection() as conn:
         with conn.cursor() as cursor:
             cursor.execute("""
@@ -2434,7 +2436,7 @@ async def get_slots_config(token: dict = Depends(verify_token)):
     return {"slots": TIME_SLOTS, "days": DAYS_OF_WEEK}
 
 @api_router.get("/timetable")
-async def get_timetable(token: dict = Depends(verify_token), class_id: Optional[int] = None, section_id: Optional[int] = None):
+async def get_timetable(token: dict = Depends(verify_token), class_id: Optional[str] = None, section_id: Optional[str] = None):
     with get_db_connection() as conn:
         with conn.cursor() as cursor:
             query = "SELECT t.*, c.name as subject_name, u.name as teacher_name FROM timetable_entries t LEFT JOIN courses c ON t.subject_id = c.id LEFT JOIN users u ON t.teacher_id = u.id WHERE 1=1"

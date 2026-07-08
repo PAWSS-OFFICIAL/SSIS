@@ -160,7 +160,7 @@ export const HallTicketPage = () => {
                     {/* Header */}
                     <div className="bg-[#1a365d] text-white p-6 flex justify-between items-center">
                       <div>
-                        <h2 className="text-xl font-bold tracking-wide">SHANTI SHIKSHA INTERNATIONAL SCHOOL</h2>
+                        <h2 className="text-xl font-bold tracking-wide">SRI SWAMY INTERNATIONAL SCHOOL</h2>
                         <p className="text-xs text-slate-300 uppercase tracking-widest mt-1">Seating Hall Ticket</p>
                       </div>
                       <div className="text-right">

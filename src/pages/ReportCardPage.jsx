@@ -283,7 +283,7 @@ export const ReportCardPage = () => {
                 {reportData && (
                   <div className="mt-4 p-6 border rounded-lg bg-white shadow-sm" id="printable-report-card">
                     <div className="text-center border-b-2 border-slate-900 pb-4 mb-6">
-                      <h2 className="text-3xl font-extrabold text-[#1a365d] tracking-wide">SHANTI SHIKSHA INTERNATIONAL SCHOOL</h2>
+                      <h2 className="text-3xl font-extrabold text-[#1a365d] tracking-wide">SRI SWAMY INTERNATIONAL SCHOOL</h2>
                       <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Affiliated to SSIS.edu.in • Academic Year 2026</p>
                       <p className="text-sm font-semibold text-slate-600 mt-2">STUDENT EVALUATION REPORT CARD</p>
                     </div>
@@ -366,7 +366,7 @@ export const ReportCardPage = () => {
                 <CardContent className="pt-6">
                   <div className="p-6 border rounded-lg bg-white shadow-sm" id="printable-report-card">
                     <div className="text-center border-b-2 border-slate-900 pb-4 mb-6">
-                      <h2 className="text-3xl font-extrabold text-[#1a365d] tracking-wide">SHANTI SHIKSHA INTERNATIONAL SCHOOL</h2>
+                      <h2 className="text-3xl font-extrabold text-[#1a365d] tracking-wide">SRI SWAMY INTERNATIONAL SCHOOL</h2>
                       <p className="text-xs text-slate-500 uppercase tracking-widest mt-1">Affiliated to SSIS.edu.in • Academic Year 2026</p>
                       <p className="text-sm font-semibold text-slate-600 mt-2">STUDENT EVALUATION REPORT CARD</p>
                     </div>

@@ -74,10 +74,10 @@ const navItems = {
     { icon: Calendar, label: "Attendance", path: "/attendance" },
     { icon: FileText, label: "Classwork", path: "/classwork" },
     { icon: FileText, label: "Leave Requests", path: "/leave" },
-    { icon: Calendar, label: "Exam Locator", path: "/exams" },
+    { icon: Calendar, label: "Exam Timetable", path: "/exams" },
     { icon: Ticket, label: "Hall Ticket", path: "/hall-ticket" },
     { icon: Trophy, label: "Rewards", path: "/gamification" },
-    { icon: Briefcase, label: "Jobs", path: "/jobs" },
+
     { icon: Settings, label: "Settings", path: "/settings" },
   ],
   Parent: [

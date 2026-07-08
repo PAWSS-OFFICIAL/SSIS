@@ -144,7 +144,7 @@ export const ExamLocatorPage = () => {
 
     if (loading) {
         return (
-            <DashboardLayout title="Exam Hall Locator">
+            <DashboardLayout title="Exam Timetable">
                 <div className="flex items-center justify-center h-64">
                     <Loader2 className="w-8 h-8 animate-spin text-[#1a365d]" />
                 </div>
@@ -153,7 +153,7 @@ export const ExamLocatorPage = () => {
     }
 
     return (
-        <DashboardLayout title="Exam Hall Locator">
+        <DashboardLayout title="Exam Timetable">
             <div className="space-y-6">
                 {/* Student View */}
                 {isStudent && (

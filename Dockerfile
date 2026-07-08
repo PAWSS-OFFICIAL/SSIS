@@ -1,8 +1,8 @@
 # Stage 1: Build the React frontend
 FROM node:18-alpine AS frontend-build
 WORKDIR /app
-COPY package.json package-lock.json ./
-RUN npm ci --production=false
+COPY package.json package-lock.json .npmrc ./
+RUN npm install --legacy-peer-deps
 COPY public/ ./public/
 COPY src/ ./src/
 COPY tailwind.config.js postcss.config.js craco.config.js jsconfig.json ./

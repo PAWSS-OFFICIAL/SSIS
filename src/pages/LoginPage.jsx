@@ -105,7 +105,7 @@ export const LoginPage = () => {
             </div>
           </div>
 
-          <Card className="border-0 shadow-lg">
+          <Card className="border-0 shadow-lg bg-white text-slate-900">
             <CardHeader className="space-y-1 pb-6">
               <CardTitle className="text-2xl font-bold text-slate-900">Welcome back</CardTitle>
               <CardDescription>Enter your credentials to access your account</CardDescription>
@@ -159,7 +159,7 @@ export const LoginPage = () => {
                           value={identifier}
                           onChange={(e) => setIdentifier(e.target.value)}
                           placeholder="Enter username or email"
-                          className="pl-10"
+                          className="pl-10 bg-white border-slate-300 text-slate-900"
                           required={loginMode === "standard"}
                           data-testid="login-identifier"
                         />
@@ -178,7 +178,7 @@ export const LoginPage = () => {
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
                           placeholder="Enter your password"
-                          className="pl-10 pr-10"
+                          className="pl-10 pr-10 bg-white border-slate-300 text-slate-900"
                           required={loginMode === "standard"}
                           data-testid="login-password"
                         />
@@ -207,7 +207,7 @@ export const LoginPage = () => {
                           value={rollNo}
                           onChange={(e) => setRollNo(e.target.value)}
                           placeholder="Enter student roll number (e.g. R0001)"
-                          className="pl-10"
+                          className="pl-10 bg-white border-slate-300 text-slate-900"
                           required={loginMode === "parent"}
                         />
                       </div>
@@ -223,7 +223,7 @@ export const LoginPage = () => {
                           type="date"
                           value={dob}
                           onChange={(e) => setDob(e.target.value)}
-                          className="w-full"
+                          className="w-full bg-white border-slate-300 text-slate-900"
                           required={loginMode === "parent"}
                         />
                       </div>

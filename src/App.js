@@ -47,8 +47,10 @@ import { SearchModal } from "./components/SearchModal";
 
 import "./App.css";
 
-// Use relative path for API in production (Vercel)
-export const API = "/api";
+// Use REACT_APP_BACKEND_URL for split deploys (e.g. Cloudflare + Railway), falls back to /api for same-server
+export const API = process.env.REACT_APP_BACKEND_URL
+  ? `${process.env.REACT_APP_BACKEND_URL}/api`
+  : "/api";
 
 // Auth Context
 const AuthContext = createContext(null);

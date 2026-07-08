@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth, apiClient, useSearch } from "../App";
 import { useTheme } from "../contexts/ThemeContext";
-import { Watermark } from "./Watermark";
 import {
   LayoutDashboard,
   Users,
@@ -355,7 +354,6 @@ export const DashboardLayout = ({ children, title }) => {
           <div className="max-w-7xl mx-auto">
             {children}
           </div>
-          <Watermark />
         </main>
       </div>
     </div>

@@ -7,7 +7,7 @@ import { Button } from "../components/ui/button";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
-import { Bell, Send, Users, ShieldAlert, Clock } from "lucide-react";
+import { Bell, Send, Users, ShieldAlert, Clock, Loader2 } from "lucide-react";
 
 export const AnnouncementsPage = () => {
   const { user } = useAuth();

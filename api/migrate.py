@@ -34,9 +34,13 @@ CREATE TABLE IF NOT EXISTS users (
     department VARCHAR(100),
     usn VARCHAR(50),
     roll_number VARCHAR(50),
+    idno VARCHAR(50),
     class_id INT,
     section VARCHAR(10),
     date_of_birth DATE,
+    parent_id INT,
+    gender VARCHAR(20),
+    blood_group VARCHAR(10),
     parent_name VARCHAR(255),
     parent_phone VARCHAR(20),
     parent_email VARCHAR(255),
@@ -46,6 +50,37 @@ CREATE TABLE IF NOT EXISTS users (
     is_active BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+-- Courses table
+CREATE TABLE IF NOT EXISTS courses (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    teacher_id INT,
+    class_id INT,
+    section_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Parents table
+CREATE TABLE IF NOT EXISTS parents (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    email VARCHAR(255),
+    phone VARCHAR(50),
+    student_id INT,
+    is_primary_contact BOOLEAN DEFAULT 1
+);
+
+-- Notifications table
+CREATE TABLE IF NOT EXISTS notifications (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    message TEXT,
+    type VARCHAR(50) DEFAULT 'info',
+    is_read BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- Subjects table
@@ -66,6 +101,7 @@ CREATE TABLE IF NOT EXISTS classes (
     section VARCHAR(10),
     academic_year VARCHAR(20),
     class_teacher_id INT,
+    sequence_order INT DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 

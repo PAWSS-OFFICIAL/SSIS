@@ -127,7 +127,7 @@ export const CanteenStaffPortal = () => {
                                 </div>
                               ) : order.orderType === 'child' ? (
                                 <div>
-                                  <span className="font-bold text-[#1a365d]">{order.studentDetails?.name || `Child of ${order.placedBy}`}</span>
+                                  <span className="font-bold text-[#1a365d]">{order.studentDetails?.name || `Child of ${order.placedBy || 'Parent'}`}</span>
                                   {order.studentDetails?.class && (
                                     <div className="text-xs bg-slate-100 inline-block px-1.5 rounded mt-1">
                                       Class {order.studentDetails.class} - {order.studentDetails.section}
@@ -137,9 +137,9 @@ export const CanteenStaffPortal = () => {
                               ) : (
                                 <div>
                                   <span className="font-bold text-slate-700">
-                                    {order.placedBy}
+                                    {order.placedBy || 'Staff Member'}
                                   </span>
-                                  <div className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Staff Member</div>
+                                  <div className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Staff</div>
                                 </div>
                               )}
                             </TableCell>
@@ -201,8 +201,8 @@ export const CanteenStaffPortal = () => {
                           <p className="font-bold text-sm">#{order.id}</p>
                           <p className="text-xs text-slate-500">
                             {order.orderType === 'student' || order.orderType === 'child' 
-                              ? (order.studentDetails?.name || `Child of ${order.placedBy}`)
-                              : order.placedBy}
+                              ? (order.studentDetails?.name || `Child of ${order.placedBy || 'Parent'}`)
+                              : (order.placedBy || 'Staff Member')}
                           </p>
                         </div>
                         <CheckCircle className="w-5 h-5 text-green-500" />

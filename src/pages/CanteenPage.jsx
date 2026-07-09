@@ -75,8 +75,8 @@ export const CanteenPage = () => {
 
     const newOrder = {
       id: Math.random().toString(36).substr(2, 9),
-      placedBy: user.name,
-      placedByRole: user.role,
+      placedBy: user?.full_name || user?.name || user?.username || "Unknown",
+      placedByRole: user?.role,
       orderType,
       studentDetails: orderType === 'student' ? studentDetails : orderType === 'child' ? {
         name: user.student_name,

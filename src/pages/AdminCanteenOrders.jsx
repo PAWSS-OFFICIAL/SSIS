@@ -89,7 +89,7 @@ export const AdminCanteenOrders = () => {
                             </div>
                           ) : order.orderType === 'child' ? (
                             <div>
-                              <span className="font-medium">{order.studentDetails?.name || `Child of ${order.placedBy}`}</span>
+                              <span className="font-medium">{order.studentDetails?.name || `Child of ${order.placedBy || 'Parent'}`}</span>
                               {order.studentDetails?.class && (
                                 <>
                                   <br />
@@ -100,7 +100,7 @@ export const AdminCanteenOrders = () => {
                               )}
                             </div>
                           ) : (
-                            <span className="font-medium text-[#1a365d]">{order.placedBy}</span>
+                            <span className="font-medium text-[#1a365d]">{order.placedBy || 'Staff Member'}</span>
                           )}
                         </TableCell>
                         <TableCell>

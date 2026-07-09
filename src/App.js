@@ -45,7 +45,8 @@ import { HallTicketPage } from "./pages/HallTicketPage";
 import { AccessibilitySettings } from "./pages/AccessibilitySettings";
 import { SearchModal } from "./components/SearchModal";
 import { CanteenPage } from "./pages/CanteenPage";
-import { CanteenPortal } from "./pages/CanteenPortal";
+import { CanteenStaffPortal } from "./pages/CanteenStaffPortal";
+import { AdminCanteenOrders } from "./pages/AdminCanteenOrders";
 
 import "./App.css";
 
@@ -405,11 +406,12 @@ function App() {
               <CanteenPage />
             </ProtectedRoute>
           } />
-          <Route path="/canteen-portal" element={
+          <Route path="/admin/canteen" element={
             <ProtectedRoute allowedRoles={["Admin"]}>
-              <CanteenPortal />
+              <AdminCanteenOrders />
             </ProtectedRoute>
           } />
+          <Route path="/canteen-staff" element={<CanteenStaffPortal />} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

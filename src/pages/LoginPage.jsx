@@ -6,8 +6,9 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import { Alert, AlertDescription } from "../components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../components/ui/dialog";
 import { toast } from "sonner";
-import { Eye, EyeOff, Loader2, Mail, Lock, User, AlertCircle } from "lucide-react";
+import { Eye, EyeOff, Loader2, Mail, Lock, User, AlertCircle, Coffee } from "lucide-react";
 
 export const LoginPage = () => {
   const { login, parentLogin, user } = useAuth();
@@ -262,6 +263,25 @@ export const LoginPage = () => {
 
             </CardContent>
           </Card>
+
+          <div className="mt-8 text-center">
+            <button 
+              type="button"
+              onClick={() => {
+                const pin = prompt("Enter Canteen Staff PIN (hint: 5678):");
+                if (pin === "5678") {
+                  localStorage.setItem("canteenAuth", "true");
+                  navigate("/canteen-staff");
+                } else if (pin) {
+                  alert("Incorrect PIN");
+                }
+              }}
+              className="inline-flex items-center text-sm text-slate-500 hover:text-slate-800 transition-colors bg-white/50 backdrop-blur-sm px-4 py-2 rounded-full border border-slate-200"
+            >
+              <Coffee className="w-4 h-4 mr-2" />
+              Canteen Staff Access
+            </button>
+          </div>
         </div>
       </div>
     </div>

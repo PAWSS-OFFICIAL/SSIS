@@ -53,7 +53,7 @@ const navItems = {
     { icon: GraduationCap, label: "Report Card", path: "/report-cards" },
     { icon: Calendar, label: "Exam Hall", path: "/admin/exam-halls" },
     { icon: Bell, label: "Announcements", path: "/admin/announcements" },
-    { icon: ShoppingBag, label: "Canteen Portal", path: "/canteen-portal" },
+    { icon: ShoppingBag, label: "Canteen Orders", path: "/admin/canteen" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ],
   Teacher: [

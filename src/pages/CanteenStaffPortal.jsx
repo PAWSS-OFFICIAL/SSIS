@@ -125,11 +125,21 @@ export const CanteenStaffPortal = () => {
                                     Class {order.studentDetails?.class} - {order.studentDetails?.section}
                                   </div>
                                 </div>
+                              ) : order.orderType === 'child' ? (
+                                <div>
+                                  <span className="font-bold text-[#1a365d]">{order.studentDetails?.name || `Child of ${order.placedBy}`}</span>
+                                  {order.studentDetails?.class && (
+                                    <div className="text-xs bg-slate-100 inline-block px-1.5 rounded mt-1">
+                                      Class {order.studentDetails.class} - {order.studentDetails.section}
+                                    </div>
+                                  )}
+                                </div>
                               ) : (
                                 <div>
                                   <span className="font-bold text-slate-700">
-                                    {order.orderType === 'child' ? "Parent's Child" : "Staff Member"}
+                                    {order.placedBy}
                                   </span>
+                                  <div className="text-xs text-slate-500 mt-1 uppercase tracking-wider font-semibold">Staff Member</div>
                                 </div>
                               )}
                             </TableCell>
@@ -190,7 +200,9 @@ export const CanteenStaffPortal = () => {
                         <div>
                           <p className="font-bold text-sm">#{order.id}</p>
                           <p className="text-xs text-slate-500">
-                            {order.orderType === 'student' ? order.studentDetails?.name : order.placedBy}
+                            {order.orderType === 'student' || order.orderType === 'child' 
+                              ? (order.studentDetails?.name || `Child of ${order.placedBy}`)
+                              : order.placedBy}
                           </p>
                         </div>
                         <CheckCircle className="w-5 h-5 text-green-500" />

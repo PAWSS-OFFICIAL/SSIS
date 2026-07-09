@@ -88,9 +88,19 @@ export const AdminCanteenOrders = () => {
                               </span>
                             </div>
                           ) : order.orderType === 'child' ? (
-                            <span className="text-sm text-slate-600">Their Child</span>
+                            <div>
+                              <span className="font-medium">{order.studentDetails?.name || `Child of ${order.placedBy}`}</span>
+                              {order.studentDetails?.class && (
+                                <>
+                                  <br />
+                                  <span className="text-xs text-slate-500">
+                                    Class {order.studentDetails.class}-{order.studentDetails.section}
+                                  </span>
+                                </>
+                              )}
+                            </div>
                           ) : (
-                            <span className="text-sm text-slate-600">Self</span>
+                            <span className="font-medium text-[#1a365d]">{order.placedBy}</span>
                           )}
                         </TableCell>
                         <TableCell>

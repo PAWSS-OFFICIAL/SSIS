@@ -78,7 +78,11 @@ export const CanteenPage = () => {
       placedBy: user.name,
       placedByRole: user.role,
       orderType,
-      studentDetails: orderType === 'student' ? studentDetails : null,
+      studentDetails: orderType === 'student' ? studentDetails : orderType === 'child' ? {
+        name: user.student_name,
+        class: user.class_name,
+        section: user.section_name
+      } : null,
       items: orderItems,
       totalAmount: orderTotal,
       status: "Pending",

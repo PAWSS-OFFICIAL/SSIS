@@ -45,7 +45,8 @@ import {
   Clock,
   ShieldCheck,
   AlertOctagon,
-  Monitor
+  Monitor,
+  Coffee
 } from "lucide-react";
 
 export const TeacherDashboard = () => {
@@ -267,6 +268,14 @@ export const TeacherDashboard = () => {
               >
                 <FileText className="w-4 h-4 mr-2" />
                 Create Quiz
+              </Button>
+              <Button
+                variant="outline"
+                className="border-amber-200 text-amber-700 bg-amber-50 hover:bg-amber-100"
+                onClick={() => window.location.href = '/canteen'}
+              >
+                <Coffee className="w-4 h-4 mr-2" />
+                Canteen
               </Button>
               <DialogContent className="max-w-md">
                 <DialogHeader>

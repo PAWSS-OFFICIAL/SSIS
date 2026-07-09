@@ -24,7 +24,8 @@ import {
   Briefcase,
   Monitor,
   Search,
-  BarChart3,
+  ShoppingBag,
+  Coffee,
   Ticket
 } from "lucide-react";
 import { Button } from "./ui/button";
@@ -52,6 +53,7 @@ const navItems = {
     { icon: GraduationCap, label: "Report Card", path: "/report-cards" },
     { icon: Calendar, label: "Exam Hall", path: "/admin/exam-halls" },
     { icon: Bell, label: "Announcements", path: "/admin/announcements" },
+    { icon: ShoppingBag, label: "Canteen Orders", path: "/admin/canteen" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ],
   Teacher: [
@@ -62,6 +64,7 @@ const navItems = {
     { icon: Calendar, label: "Attendance", path: "/attendance" },
     { icon: FileText, label: "Classwork", path: "/classwork" },
     { icon: FileText, label: "Leave Requests", path: "/leave" },
+    { icon: Coffee, label: "Canteen", path: "/canteen" },
     { icon: Users, label: "Principal Dashboard", path: "/principal" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ],
@@ -85,6 +88,7 @@ const navItems = {
     { icon: ClipboardList, label: "Timetable", path: "/timetable" },
     { icon: GraduationCap, label: "Report Card", path: "/report-cards" },
     { icon: Calendar, label: "Attendance", path: "/attendance" },
+    { icon: Coffee, label: "Canteen", path: "/canteen" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ],
 };

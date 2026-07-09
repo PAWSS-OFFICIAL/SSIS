@@ -44,6 +44,8 @@ import { TeacherAnalytics } from "./pages/TeacherAnalytics";
 import { HallTicketPage } from "./pages/HallTicketPage";
 import { AccessibilitySettings } from "./pages/AccessibilitySettings";
 import { SearchModal } from "./components/SearchModal";
+import { CanteenPage } from "./pages/CanteenPage";
+import { AdminCanteenOrders } from "./pages/AdminCanteenOrders";
 
 import "./App.css";
 
@@ -394,8 +396,18 @@ function App() {
           } />
 
           <Route path="/settings/accessibility" element={
-            <ProtectedRoute allowedRoles={["Admin", "Teacher", "Student", "Parent"]}>
+            <ProtectedRoute allowedRoles={["Student", "Teacher", "Admin", "Parent", "Principal"]}>
               <AccessibilitySettings />
+            </ProtectedRoute>
+          } />
+          <Route path="/canteen" element={
+            <ProtectedRoute allowedRoles={["Teacher", "Parent"]}>
+              <CanteenPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/canteen" element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <AdminCanteenOrders />
             </ProtectedRoute>
           } />
 

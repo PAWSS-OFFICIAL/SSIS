@@ -13,7 +13,7 @@ router = APIRouter(prefix="/student/pylearn", tags=["PyLearn"])
 
 @router.get("/progress")
 def get_pylearn_progress(token: dict = Depends(require_role("Student"))):
-    user_id = token['id']
+    user_id = token['user_id']
     conn = get_db_connection()
     try:
         with conn.cursor() as cursor:
@@ -72,7 +72,7 @@ def get_pylearn_module(module_id: int, token: dict = Depends(require_role("Stude
 
 @router.post("/submit")
 def submit_task(data: dict = Body(...), token: dict = Depends(require_role("Student"))):
-    user_id = token['id']
+    user_id = token['user_id']
     task_id = data.get('taskId')
     stdout = data.get('stdout', '')
     
@@ -151,7 +151,7 @@ def get_cert_questions(token: dict = Depends(require_role("Student"))):
 
 @router.post("/certificate/submit")
 def submit_cert(data: dict = Body(...), token: dict = Depends(require_role("Student"))):
-    user_id = token['id']
+    user_id = token['user_id']
     cert_name = data.get('certificateName', '')
     answers = data.get('answers', [])
     

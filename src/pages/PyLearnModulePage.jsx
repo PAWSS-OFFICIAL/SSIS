@@ -34,12 +34,19 @@ export const PyLearnModulePage = () => {
           script.src = "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js";
           document.head.appendChild(script);
           script.onload = async () => {
-            const py = await window.loadPyodide();
+            // Mask AMD define to prevent conflicts with Monaco Editor
+            const oldDefine = window.define;
+            window.define = null;
+            const py = await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/" });
+            window.define = oldDefine;
             setPyodide(py);
             setPyodideLoading(false);
           };
         } else {
-          const py = await window.loadPyodide();
+          const oldDefine = window.define;
+          window.define = null;
+          const py = await window.loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.25.0/full/" });
+          window.define = oldDefine;
           setPyodide(py);
           setPyodideLoading(false);
         }

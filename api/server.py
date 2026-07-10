@@ -5510,13 +5510,14 @@ async def send_announcement(ann: AnnouncementCreate, token: dict = Depends(requi
             # MOCK WHATSAPP SENDING HERE
             print(f"[MOCK WHATSAPP] Sent to Class {ann.target_class_id} Section {ann.target_section_id}: {ann.message}")
             return {"message": "Announcement sent"}
-
 # ==========================================
 # FINAL APP MOUNTING & ROUTING
 # ==========================================
 
 # Include the router
 app.include_router(api_router)
+from routers.pylearn import router as pylearn_router
+app.include_router(pylearn_router, prefix="/api")
 
 # Mount React build for single-server execution (Serverless-like behavior)
 from fastapi.staticfiles import StaticFiles

@@ -46,6 +46,9 @@ import { AccessibilitySettings } from "./pages/AccessibilitySettings";
 import { SearchModal } from "./components/SearchModal";
 import { CanteenPage } from "./pages/CanteenPage";
 import { CanteenStaffPortal } from "./pages/CanteenStaffPortal";
+import { PyLearnDashboardPage } from "./pages/PyLearnDashboardPage";
+import { PyLearnModulePage } from "./pages/PyLearnModulePage";
+import { PyLearnCertificatePage } from "./pages/PyLearnCertificatePage";
 import { AdminCanteenOrders } from "./pages/AdminCanteenOrders";
 
 import "./App.css";
@@ -291,6 +294,22 @@ function App() {
           <Route path="/dashboard" element={
             <ProtectedRoute allowedRoles={["Student"]}>
               <StudentDashboard />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/student/pylearn" element={
+            <ProtectedRoute allowedRoles={["Student"]}>
+              <PyLearnDashboardPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/student/pylearn/:moduleId" element={
+            <ProtectedRoute allowedRoles={["Student"]}>
+              <PyLearnModulePage />
+            </ProtectedRoute>
+          } />
+          <Route path="/student/pylearn/certificate" element={
+            <ProtectedRoute allowedRoles={["Student"]}>
+              <PyLearnCertificatePage />
             </ProtectedRoute>
           } />
 

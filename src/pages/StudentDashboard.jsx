@@ -112,6 +112,23 @@ export const StudentDashboard = () => {
       </div>
 
       {/* Stats Overview */}
+      <Card className="mb-8 border-l-4 border-l-[#1d3557] bg-[#f7f8fa] hover:shadow-md transition-shadow cursor-pointer" onClick={() => window.location.href = '/student/pylearn'}>
+        <CardContent className="p-6 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-[#1d3557] rounded-xl flex items-center justify-center text-white">
+              <span className="font-bold text-xl">Py</span>
+            </div>
+            <div>
+              <h3 className="font-bold text-lg text-slate-900">Interactive Python Course</h3>
+              <p className="text-slate-500 text-sm">Learn Python, complete interactive tasks, and earn a verified certificate!</p>
+            </div>
+          </div>
+          <div className="bg-[#e53e4e] text-white px-4 py-2 rounded-lg font-bold text-sm shadow-sm flex items-center gap-2">
+            Start Learning <TrendingUp className="w-4 h-4" />
+          </div>
+        </CardContent>
+      </Card>
+
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
         <Card className="card-hover">
           <CardContent className="pt-6">

@@ -3,6 +3,48 @@ import { BrowserRouter, Routes, Route, Navigate, useNavigate, useLocation } from
 import axios from "axios";
 import { Toaster, toast } from "sonner";
 
+// Use REACT_APP_BACKEND_URL for split deploys (e.g. Cloudflare + Railway), falls back to /api for same-server
+export const API = process.env.REACT_APP_BACKEND_URL
+  ? `${process.env.REACT_APP_BACKEND_URL}/api`
+  : "/api";
+
+// API instance with auth header
+export const apiClient = axios.create({
+  baseURL: API,
+});
+
+apiClient.interceptors.request.use((config) => {
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    // Transform Pydantic validation errors (array of objects) into strings
+    // to prevent React "Objects are not valid as a React child" crash in toasts
+    if (error.response?.data?.detail && Array.isArray(error.response.data.detail)) {
+      const messages = error.response.data.detail.map(err => {
+        const loc = err.loc ? err.loc.filter(l => l !== 'body').join('.') : '';
+        return `${loc ? loc + ': ' : ''}${err.msg}`;
+      });
+      error.response.data.detail = messages.join(', ');
+    }
+
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      if (window.location.pathname !== "/login") {
+        window.location.href = "/login";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 // Contexts
 import { ThemeProvider } from "./contexts/ThemeContext";
 
@@ -56,11 +98,6 @@ import { MockTestRunner } from "./pages/MockTestRunner";
 
 import "./App.css";
 
-// Use REACT_APP_BACKEND_URL for split deploys (e.g. Cloudflare + Railway), falls back to /api for same-server
-export const API = process.env.REACT_APP_BACKEND_URL
-  ? `${process.env.REACT_APP_BACKEND_URL}/api`
-  : "/api";
-
 // Auth Context
 const AuthContext = createContext(null);
 
@@ -71,43 +108,6 @@ export const useAuth = () => {
   }
   return context;
 };
-
-// API instance with auth header
-export const apiClient = axios.create({
-  baseURL: API,
-});
-
-apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem("token");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-apiClient.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    // Transform Pydantic validation errors (array of objects) into strings
-    // to prevent React "Objects are not valid as a React child" crash in toasts
-    if (error.response?.data?.detail && Array.isArray(error.response.data.detail)) {
-      const messages = error.response.data.detail.map(err => {
-        const loc = err.loc ? err.loc.filter(l => l !== 'body').join('.') : '';
-        return `${loc ? loc + ': ' : ''}${err.msg}`;
-      });
-      error.response.data.detail = messages.join(', ');
-    }
-
-    if (error.response?.status === 401) {
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-    }
-    return Promise.reject(error);
-  }
-);
 
 // Search Modal State
 const SearchContext = React.createContext(null);

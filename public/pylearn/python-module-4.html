@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 4: Control Flow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="/logo.jpg" alt="SSIS Logo" style="height:24px; border-radius:4px; margin-right:8px;" />
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 2 / 4 — Intermediate</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Conditional Statements",
+  starter:'# An if statement runs code only when a condition is True\ntemperature = 28\n\nif temperature > 25:\n    print("It is warm today")\n    print("Wear something light")\nelse:\n    print("Bring a jacket")\n',
+  html:`
+<p>So far your programs have run every line, top to bottom, no matter what. A <strong>conditional</strong> changes that: it lets a program choose whether to run a block of code, based on whether something is true. This is where code starts making decisions.</p>
+
+<h2>The if statement</h2>
+<p>An <code>if</code> statement has three parts: the keyword <code>if</code>, a condition that is either true or false, and a colon. The indented block below it runs only when the condition is true.</p>
+<pre class="code">temperature = 28
+
+if temperature &gt; 25:
+    print("It is warm today")   # runs only when the condition holds</pre>
+<p>Remember from Module 1 that the <strong>indentation is what defines the block</strong>. Every line indented under the <code>if</code> belongs to it; the first line back at the left margin is outside it and always runs.</p>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Two things trip people up here: forgetting the colon at the end of the <code>if</code> line (a <code>SyntaxError</code>), and using a single <code>=</code> instead of <code>==</code> inside the condition. <code>if score = 10:</code> is an error; you meant <code>if score == 10:</code>.</p></div>
+
+<h2>else: the other path</h2>
+<p><code>else</code> gives a block to run when the condition is false. There is no condition on an <code>else</code> — it simply catches everything the <code>if</code> did not.</p>
+<pre class="code">age = 15
+
+if age &gt;= 18:
+    print("You may enrol directly")
+else:
+    print("You need parental consent")</pre>
+
+<h2>elif: choosing between many options</h2>
+<p>When there are several possibilities, use <code>elif</code> (short for "else if"). Python checks each condition in order and runs the block for the <strong>first</strong> one that is true, then skips all the rest.</p>
+<pre class="code">score = 72
+
+if score &gt;= 70:
+    print("Distinction")
+elif score &gt;= 50:
+    print("Pass")
+else:
+    print("Needs improvement")</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Order matters. Because only the first true branch runs, put the strictest condition first. If you tested <code>score &gt;= 50</code> before <code>score &gt;= 70</code>, a score of 72 would match the 50 branch and never reach the 70 one.</p></div>
+<p>Python has no <code>switch</code> statement like C or Java. The <code>if</code>/<code>elif</code>/<code>else</code> chain is the standard tool. (Newer Python has a <code>match</code> statement for advanced pattern work, but you will not need it yet.)</p>
+
+<h2>Testing truthiness directly</h2>
+<p>Recall from Module 2 that every value is truthy or falsy. You can put a value straight into an <code>if</code> without comparing it to anything.</p>
+<pre class="code">name = ""
+
+if name:
+    print(f"Hello, {name}")
+else:
+    print("No name was given")   # empty string is falsy, so this runs</pre>
+
+<h2>A one-line choice</h2>
+<p>When you just need to pick between two values, Python offers a compact <strong>conditional expression</strong>: <code>A if condition else B</code>.</p>
+<pre class="code">score = 45
+result = "pass" if score &gt;= 50 else "fail"
+print(result)   # fail</pre>
+`
+},
+{
+  title:"The for Loop",
+  starter:'# A for loop repeats once for each item in a sequence\nfor colour in ["red", "green", "blue"]:\n    print(colour)\n\n# range() generates numbers to loop over\nfor number in range(1, 6):\n    print(number)\n',
+  html:`
+<p>A <strong>loop</strong> repeats a block of code. The <code>for</code> loop repeats it once for each item in a sequence — each character in a string, each item in a list, each number in a range. It saves you from writing the same line many times over.</p>
+
+<h2>Looping over a sequence</h2>
+<p>The shape is <code>for &lt;name&gt; in &lt;sequence&gt;:</code>. On each pass, the name is set to the next item, and the indented block runs.</p>
+<pre class="code">for colour in ["red", "green", "blue"]:
+    print(colour)
+# red
+# green
+# blue</pre>
+<p>This is a <em>for-each</em> loop. Unlike C's <code>for (i = 0; i &lt; n; i++)</code>, you do not manage a counter by hand — Python hands you each item directly.</p>
+
+<h2>Counting with range()</h2>
+<p>To loop a set number of times, use <code>range()</code>, which produces a sequence of numbers. It comes in three forms.</p>
+<table>
+<tr><th>Call</th><th>Produces</th></tr>
+<tr><td><code>range(5)</code></td><td>0, 1, 2, 3, 4</td></tr>
+<tr><td><code>range(2, 6)</code></td><td>2, 3, 4, 5</td></tr>
+<tr><td><code>range(0, 10, 2)</code></td><td>0, 2, 4, 6, 8</td></tr>
+</table>
+<pre class="code">for number in range(1, 6):
+    print(number)
+# 1 2 3 4 5  (each on its own line)</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>The <code>stop</code> value is <strong>excluded</strong>, just like string slicing in Module 2. <code>range(1, 6)</code> stops at 5, not 6. To count 1 through 6, write <code>range(1, 7)</code>.</p></div>
+
+<h2>Looping over the characters of a string</h2>
+<pre class="code">for letter in "Cadet":
+    print(letter)
+# C a d e t  (one per line)</pre>
+
+<h2>Getting the position too: enumerate()</h2>
+<p>Sometimes you want the item <em>and</em> its position. <code>enumerate()</code> gives you both, so you do not have to track an index by hand.</p>
+<pre class="code">colours = ["red", "green", "blue"]
+for index, colour in enumerate(colours):
+    print(index, colour)
+# 0 red
+# 1 green
+# 2 blue</pre>
+
+<h2>Building up a result</h2>
+<p>A very common pattern is to start a total at zero and add to it on each pass. This is called an <strong>accumulator</strong>.</p>
+<pre class="code">total = 0
+for number in range(1, 6):
+    total += number      # add each number to the running total
+print(total)             # 15  (1+2+3+4+5)</pre>
+`
+},
+{
+  title:"The while Loop",
+  starter:'# A while loop repeats as long as its condition stays True\ncount = 5\n\nwhile count > 0:\n    print(count)\n    count -= 1      # move towards ending the loop\n\nprint("Lift off!")\n',
+  html:`
+<p>The <code>for</code> loop repeats a known number of times. The <code>while</code> loop is different: it repeats <strong>as long as a condition stays true</strong>, however many times that turns out to be. You reach for it when you do not know the count in advance.</p>
+
+<h2>How a while loop works</h2>
+<p>Python checks the condition. If it is true, it runs the block, then checks the condition again. It keeps going until the condition becomes false.</p>
+<pre class="code">count = 5
+
+while count &gt; 0:
+    print(count)
+    count -= 1      # this is what eventually ends the loop
+
+print("Lift off!")
+# 5 4 3 2 1 Lift off!</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>You must change something inside the loop that moves the condition towards false. Forget the <code>count -= 1</code> above and <code>count</code> stays 5 forever — an <strong>infinite loop</strong> that never stops. If a program hangs, a while loop with no exit is the usual cause.</p></div>
+
+<h2>Looping until something happens</h2>
+<p>Because the number of repeats is not fixed, <code>while</code> suits "keep going until…" situations. Here we double a number until it passes 100.</p>
+<pre class="code">value = 1
+
+while value &lt; 100:
+    value *= 2
+print(value)   # 128  (the first power of two above 100)</pre>
+
+<h2>for or while?</h2>
+<table>
+<tr><th>Use a for loop when…</th><th>Use a while loop when…</th></tr>
+<tr><td>you have a sequence to go through</td><td>you loop until a condition changes</td></tr>
+<tr><td>you know how many times to repeat</td><td>you do not know the count in advance</td></tr>
+</table>
+<div class="callout tip"><span class="lbl">Tip</span><p>If you catch yourself creating a counter and increasing it by one each pass inside a while loop, a <code>for</code> loop with <code>range()</code> is usually cleaner and safer.</p></div>
+`
+},
+{
+  title:"break, continue & Loop else",
+  starter:'# break leaves a loop early; continue skips to the next pass\nfor number in range(1, 11):\n    if number == 7:\n        break            # stop the whole loop at 7\n    if number % 2 == 0:\n        continue         # skip even numbers\n    print(number)        # 1 3 5\n',
+  html:`
+<p>Two keywords give you finer control inside any loop: <code>break</code> stops the loop completely, and <code>continue</code> skips the rest of the current pass and moves on to the next. Python also has an unusual <code>else</code> on loops, which this lesson explains.</p>
+
+<h2>break: stop early</h2>
+<p><code>break</code> exits the loop immediately, even if there are items left. Everything after the loop then carries on as normal.</p>
+<pre class="code">for number in range(1, 100):
+    if number == 5:
+        break            # leave the loop the moment we hit 5
+    print(number)
+# 1 2 3 4</pre>
+
+<h2>continue: skip this one</h2>
+<p><code>continue</code> abandons the current pass and jumps straight to the next item. The loop itself keeps going.</p>
+<pre class="code">for number in range(1, 7):
+    if number % 2 == 0:
+        continue         # skip the even numbers
+    print(number)
+# 1 3 5</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Mixing up the two. <code>break</code> ends the <em>entire</em> loop; <code>continue</code> ends only the <em>current</em> pass. Reach for <code>continue</code> when you want to ignore some items, and <code>break</code> when you are finished altogether.</p></div>
+
+<h2>The loop else clause</h2>
+<p>Loops can have an <code>else</code> block. It is unusual and often misunderstood: the <code>else</code> runs <strong>only if the loop finished normally</strong>, without hitting a <code>break</code>. It is handy for "I checked everything and found nothing" situations.</p>
+<pre class="code">target = 8
+
+for number in [2, 4, 6]:
+    if number == target:
+        print("Found it")
+        break
+else:
+    print("Not found")   # runs because the loop never broke
+# Not found</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Read the loop <code>else</code> as "no break". If the loop reaches the end without a <code>break</code>, the <code>else</code> runs. If a <code>break</code> fired, the <code>else</code> is skipped. This behaviour is unique to Python — most languages have nothing like it.</p></div>
+
+<h2>pass: do nothing on purpose</h2>
+<p><code>pass</code> is a placeholder that does nothing at all. You use it when the syntax needs a block but you have no code to put there yet.</p>
+<pre class="code">for number in range(3):
+    pass   # nothing to do yet, but the loop still needs a body
+print("Done")</pre>
+`
+}
+];
+
+const TASKS = [
+ {p:'Set <code>age = 20</code> and print <code>Adult</code> only if age is 18 or more (use an <code>if</code> on its own).',
+  c:'age = 20\nif age >= 18:\n    print("Adult")',
+  e:'The indented <code>print</code> runs only when the condition after <code>if</code> is true, so an age of 20 prints Adult.'},
+ {p:'Set <code>number = 7</code> and print <code>Even</code> or <code>Odd</code> using <code>if</code>/<code>else</code> and the modulo operator.',
+  c:'number = 7\nif number % 2 == 0:\n    print("Even")\nelse:\n    print("Odd")',
+  e:'A number is even when the remainder after dividing by 2 is zero, so the <code>else</code> branch handles the odd case.'},
+ {p:'Set <code>score = 72</code> and print <code>Distinction</code> for 70 or more, <code>Pass</code> for 50 or more, otherwise <code>Needs improvement</code>.',
+  c:'score = 72\nif score >= 70:\n    print("Distinction")\nelif score >= 50:\n    print("Pass")\nelse:\n    print("Needs improvement")',
+  e:'Python runs the first branch whose condition is true, so the strictest test is placed first.'},
+ {p:'Use a <code>for</code> loop with <code>range()</code> to print the numbers 1 to 5, one per line.',
+  c:'for n in range(1, 6):\n    print(n)',
+  e:'<code>range(1, 6)</code> yields 1 through 5 because the stop value 6 is excluded.'},
+ {p:'Use a <code>for</code> loop to print each character of the string <code>"Cadet"</code> on its own line.',
+  c:'for letter in "Cadet":\n    print(letter)',
+  e:'Looping over a string hands you one character at a time, which the loop then prints.'},
+ {p:'Use a <code>for</code> loop and an accumulator to add up the numbers 1 to 10, then print the total.',
+  c:'total = 0\nfor n in range(1, 11):\n    total += n\nprint(total)   # 55',
+  e:'The total starts at zero and each pass adds the next number, finishing at 55.'},
+ {p:'Use a <code>while</code> loop to count down from 5 to 1, printing each number.',
+  c:'count = 5\nwhile count > 0:\n    print(count)\n    count -= 1',
+  e:'The loop repeats while count is above zero, and subtracting one each pass moves it towards the stopping point.'},
+ {p:'Starting from <code>value = 1</code>, use a <code>while</code> loop to keep doubling until the value passes 100, then print it.',
+  c:'value = 1\nwhile value <= 100:\n    value *= 2\nprint(value)   # 128',
+  e:'The loop doubles the value until the condition fails, leaving 128 as the first power of two above 100.'},
+ {p:'Use a <code>for</code> loop over 1 to 10 and <code>continue</code> to skip the even numbers, printing only the odd ones.',
+  c:'for n in range(1, 11):\n    if n % 2 == 0:\n        continue\n    print(n)',
+  e:'<code>continue</code> jumps to the next pass whenever the number is even, so only odd numbers reach the print.'},
+ {p:'Create a list <code>["red", "green", "blue"]</code> and use <code>enumerate()</code> to print each item with its position.',
+  c:'items = ["red", "green", "blue"]\nfor index, item in enumerate(items):\n    print(index, item)',
+  e:'<code>enumerate()</code> yields the position and the value together, so you do not have to track an index yourself.'},
+ {p:'Set <code>score = 45</code> and use a one-line conditional expression to store <code>"pass"</code> or <code>"fail"</code>, then print it.',
+  c:'score = 45\nresult = "pass" if score >= 50 else "fail"\nprint(result)   # fail',
+  e:'The conditional expression picks the value before <code>if</code> when the test is true, and the value after <code>else</code> otherwise.'},
+ {p:'Write FizzBuzz for the numbers 1 to 15: print <code>Fizz</code> for multiples of 3, <code>Buzz</code> for multiples of 5, <code>FizzBuzz</code> for multiples of both, otherwise the number.',
+  c:'for n in range(1, 16):\n    if n % 15 == 0:\n        print("FizzBuzz")\n    elif n % 3 == 0:\n        print("Fizz")\n    elif n % 5 == 0:\n        print("Buzz")\n    else:\n        print(n)',
+  e:'Testing the multiple-of-15 case first catches numbers divisible by both 3 and 5 before the single-factor branches run.'}
+];
+
+const NAV = [
+ {label:"4. Control Flow", items:[
+   {type:"lesson", i:0, label:"Conditional Statements"},
+   {type:"lesson", i:1, label:"The for Loop"},
+   {type:"lesson", i:2, label:"The while Loop"},
+   {type:"lesson", i:3, label:"break, continue & Loop else"},
+   {type:"tasks", label:"Module 4 Tasks", count:12}
+ ]},
+ {label:"5. Functions", locked:true, items:[
+   {label:"Defining Functions"},{label:"Parameters & Arguments"},{label:"Return Values & Scope"},{label:"Lambda Functions"},
+   {type:"tasks", label:"Module 5 Tasks", count:12}
+ ]},
+ {label:"6. Data Structures", locked:true, items:[
+   {label:"Lists"},{label:"Tuples"},{label:"Dictionaries"},{label:"Sets"},
+   {type:"tasks", label:"Module 6 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='4. Control Flow';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='4. Control Flow';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 6: Data Structures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo-pill"><span class="logo-cadet">Cadet</span><span class="logo-x">X</span></div>
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 2 / 4 — Intermediate</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Lists",
+  starter:'# A list holds many values in order, inside square brackets\ncolours = ["red", "green", "blue"]\nprint(colours[0])       # red\nprint(len(colours))     # 3\n\ncolours.append("yellow")\nprint(colours)          # [\'red\', \'green\', \'blue\', \'yellow\']\n',
+  html:`
+<p>So far each variable has held a single value. A <strong>list</strong> holds many values in a single name, kept in order. You write one with square brackets and commas between the items. Lists are the workhorse collection of Python.</p>
+<pre class="code">colours = ["red", "green", "blue"]
+numbers = [10, 20, 30, 40]
+mixed = ["CadetX", 2026, True]   # a list can mix types
+print(colours)
+print(len(numbers))   # 4</pre>
+
+<h2>Reaching items by index</h2>
+<p>Items have positions starting at <code>0</code>, exactly like string characters in Module 2. Negative indexes count from the end, and slicing works too.</p>
+<pre class="code">colours = ["red", "green", "blue"]
+print(colours[0])    # red   (first)
+print(colours[-1])   # blue  (last)
+print(colours[0:2])  # ['red', 'green']  (a slice)</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Asking for an index that does not exist raises an <code>IndexError</code>. A three-item list has valid indexes 0, 1 and 2 — there is no item 3.</p></div>
+
+<h2>Lists can be changed</h2>
+<p>Unlike strings, lists are <strong>mutable</strong>: you can change, add and remove items after the list is made. This is the single biggest difference between lists and strings.</p>
+<pre class="code">colours = ["red", "green", "blue"]
+colours[1] = "lime"       # change an item in place
+colours.append("yellow")  # add to the end
+colours.insert(0, "pink") # add at a position
+colours.remove("blue")    # remove by value
+print(colours)            # ['pink', 'red', 'lime', 'yellow']</pre>
+<table>
+<tr><th>Method</th><th>What it does</th></tr>
+<tr><td><code>.append(x)</code></td><td>add <code>x</code> to the end</td></tr>
+<tr><td><code>.insert(i, x)</code></td><td>add <code>x</code> at position <code>i</code></td></tr>
+<tr><td><code>.remove(x)</code></td><td>remove the first <code>x</code></td></tr>
+<tr><td><code>.pop()</code></td><td>remove and return the last item</td></tr>
+<tr><td><code>.sort()</code></td><td>put the list in order</td></tr>
+</table>
+
+<h2>The copy trap</h2>
+<p>Because lists are mutable, assigning one list to another name does <strong>not</strong> copy it — both names point at the same list, so a change through one is seen through the other.</p>
+<pre class="code">a = [1, 2, 3]
+b = a            # b is the SAME list, not a copy
+b.append(4)
+print(a)         # [1, 2, 3, 4]  — a changed too!
+
+c = a.copy()     # this makes a real, separate copy
+c.append(5)
+print(a)         # [1, 2, 3, 4]  — a is untouched</pre>
+<div class="callout note"><span class="lbl">Note</span><p>This is the "label, not a box" idea from Module 2 in action. To get an independent list, use <code>a.copy()</code> or <code>list(a)</code>.</p></div>
+
+<h2>Building a list with a loop</h2>
+<p>A common pattern is to start with an empty list and append to it inside a loop.</p>
+<pre class="code">squares = []
+for n in range(1, 6):
+    squares.append(n * n)
+print(squares)   # [1, 4, 9, 16, 25]</pre>
+<p>Python offers a shorter way to write exactly this, called a <strong>list comprehension</strong>.</p>
+<pre class="code">squares = [n * n for n in range(1, 6)]
+print(squares)   # [1, 4, 9, 16, 25]</pre>
+`
+},
+{
+  title:"Tuples",
+  starter:'# A tuple is like a list, but it cannot be changed\npoint = (3, 4)\nprint(point[0])   # 3\n\n# tuples are great for values that belong together\nx, y = point      # unpack into two names\nprint(x, y)       # 3 4\n',
+  html:`
+<p>A <strong>tuple</strong> is an ordered collection like a list, with one crucial difference: it is <strong>immutable</strong> — once made, it cannot be changed. You write one with round brackets instead of square ones.</p>
+<pre class="code">point = (3, 4)
+colours = ("red", "green", "blue")
+print(point[0])      # 3
+print(len(colours))  # 3</pre>
+
+<h2>Why have tuples at all?</h2>
+<p>If a tuple is just a list you cannot change, why use one? Because immutability is a promise. When values belong together and should never be altered — a coordinate, a date, a fixed pair — a tuple says so clearly and protects the data from accidental change.</p>
+<pre class="code">point = (3, 4)
+# point[0] = 10   # TypeError: tuples cannot be changed
+print(point)</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>A single-item tuple needs a trailing comma: <code>(5,)</code> is a tuple, but <code>(5)</code> is just the number 5 in brackets. This surprises almost everyone the first time.</p></div>
+<pre class="code">one = (5,)     # a tuple with one item
+not_tuple = (5) # just the integer 5
+print(type(one))       # &lt;class 'tuple'&gt;
+print(type(not_tuple)) # &lt;class 'int'&gt;</pre>
+
+<h2>Unpacking a tuple</h2>
+<p>You can spread a tuple's values into separate names in one line — this is exactly the swap trick and multiple-return from earlier modules.</p>
+<pre class="code">point = (3, 4)
+x, y = point       # x becomes 3, y becomes 4
+print(x, y)        # 3 4</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Remember from Module 5 that returning several values gives a tuple. That is why <code>low, high = min_max(...)</code> works — you are unpacking the tuple the function returned.</p></div>
+
+<h2>List or tuple?</h2>
+<table>
+<tr><th>Choose a list when…</th><th>Choose a tuple when…</th></tr>
+<tr><td>the collection will change</td><td>the values are fixed for good</td></tr>
+<tr><td>you add or remove items</td><td>the items belong together as one record</td></tr>
+<tr><td>order matters and edits happen</td><td>you want a safe, unchangeable group</td></tr>
+</table>
+`
+},
+{
+  title:"Dictionaries",
+  starter:'# A dictionary stores key -> value pairs\nstudent = {"name": "Alex", "level": "Beginner", "score": 88}\nprint(student["name"])    # Alex\n\nstudent["score"] = 92     # update a value\nstudent["active"] = True  # add a new pair\nprint(student)\n',
+  html:`
+<p>Lists and tuples find things by <em>position</em>. A <strong>dictionary</strong> finds things by a <strong>key</strong> you choose — usually a word. Each entry is a <code>key: value</code> pair, written inside curly brackets. It is perfect for describing one thing with several named details.</p>
+<pre class="code">student = {
+    "name": "Alex",
+    "level": "Beginner",
+    "score": 88
+}
+print(student["name"])    # Alex
+print(student["score"])   # 88</pre>
+
+<h2>Reading, changing and adding</h2>
+<p>You use the key in square brackets to read a value, and the same syntax to change one or add a brand-new pair.</p>
+<pre class="code">student = {"name": "Alex", "score": 88}
+student["score"] = 92        # change an existing value
+student["level"] = "Advanced" # add a new pair
+print(student)
+# {'name': 'Alex', 'score': 92, 'level': 'Advanced'}</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Reading a key that does not exist raises a <code>KeyError</code>. To read safely, use <code>.get()</code>, which returns <code>None</code> (or a default you choose) instead of crashing.</p></div>
+<pre class="code">student = {"name": "Alex"}
+# print(student["age"])         # KeyError: 'age'
+print(student.get("age"))        # None
+print(student.get("age", 0))     # 0  (your chosen default)</pre>
+
+<h2>Looping over a dictionary</h2>
+<p>Dictionaries give you three views: the keys, the values, and both together with <code>.items()</code>.</p>
+<pre class="code">student = {"name": "Alex", "score": 92}
+
+for key in student:
+    print(key)                 # name, score
+
+for key, value in student.items():
+    print(key, "=", value)     # name = Alex, score = 92</pre>
+
+<h2>Checking for a key</h2>
+<p>Use <code>in</code> to test whether a key is present before you reach for it.</p>
+<pre class="code">student = {"name": "Alex", "score": 92}
+print("name" in student)    # True
+print("age" in student)     # False</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Keys must be unique and unchangeable — strings and numbers are fine, and so are tuples, but a list cannot be a key because it can change. Values can be anything at all.</p></div>
+`
+},
+{
+  title:"Sets",
+  starter:'# A set holds unique items, with no duplicates and no order\nletters = {"a", "b", "c", "a"}\nprint(letters)         # {\'a\', \'b\', \'c\'}  — the extra a is dropped\n\nprint("a" in letters)  # True — membership is very fast\n',
+  html:`
+<p>A <strong>set</strong> is a collection with two defining rules: every item is <strong>unique</strong> (duplicates are dropped automatically), and the items have <strong>no order</strong> (you cannot index a set). You write one with curly brackets, like a dictionary but with single values instead of pairs.</p>
+<pre class="code">letters = {"a", "b", "c", "a", "b"}
+print(letters)        # {'a', 'b', 'c'}  — duplicates removed
+print(len(letters))   # 3</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>An empty pair of curly brackets <code>{}</code> makes an empty <em>dictionary</em>, not a set. To make an empty set you must write <code>set()</code>.</p></div>
+
+<h2>Removing duplicates</h2>
+<p>Because a set keeps only unique items, converting a list to a set is the standard way to strip duplicates.</p>
+<pre class="code">numbers = [1, 2, 2, 3, 3, 3]
+unique = set(numbers)
+print(unique)         # {1, 2, 3}
+print(list(unique))   # back to a list: [1, 2, 3]</pre>
+
+<h2>Fast membership tests</h2>
+<p>Checking whether an item is in a set is much faster than searching a list, because a set is built for exactly this question.</p>
+<pre class="code">enrolled = {"Alex", "Sam", "Jo"}
+print("Sam" in enrolled)     # True
+print("Pat" in enrolled)     # False</pre>
+
+<h2>Combining sets</h2>
+<p>Sets support the operations you know from maths: union, intersection and difference.</p>
+<table>
+<tr><th>Operation</th><th>Symbol</th><th>Result</th></tr>
+<tr><td>Union (in either)</td><td><code>|</code></td><td>everything from both</td></tr>
+<tr><td>Intersection (in both)</td><td><code>&amp;</code></td><td>only shared items</td></tr>
+<tr><td>Difference (in first only)</td><td><code>-</code></td><td>items not in the second</td></tr>
+</table>
+<pre class="code">group_a = {"Alex", "Sam", "Jo"}
+group_b = {"Sam", "Jo", "Pat"}
+
+print(group_a | group_b)   # {'Alex', 'Sam', 'Jo', 'Pat'}
+print(group_a &amp; group_b)   # {'Sam', 'Jo'}
+print(group_a - group_b)   # {'Alex'}</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Because sets have no order, printing one may show the items in any arrangement. Never rely on the order of a set — if order matters, use a list.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Create a list <code>colours</code> holding <code>"red"</code>, <code>"green"</code> and <code>"blue"</code>, then print the first item and the length of the list.',
+  c:'colours = ["red", "green", "blue"]\nprint(colours[0])     # red\nprint(len(colours))   # 3',
+  e:'Items are reached by index starting at 0, and <code>len()</code> reports how many items the list holds.'},
+ {p:'Starting from <code>colours = ["red", "green"]</code>, append <code>"blue"</code> to the end and print the updated list.',
+  c:'colours = ["red", "green"]\ncolours.append("blue")\nprint(colours)   # [\'red\', \'green\', \'blue\']',
+  e:'<code>.append()</code> adds an item to the end of the list, changing it in place because lists are mutable.'},
+ {p:'Use a list comprehension to build a list of the squares of the numbers 1 to 5, then print it.',
+  c:'squares = [n * n for n in range(1, 6)]\nprint(squares)   # [1, 4, 9, 16, 25]',
+  e:'The comprehension runs the loop and collects each squared value into a new list in one line.'},
+ {p:'Create a tuple <code>point = (3, 4)</code>, then unpack it into <code>x</code> and <code>y</code> and print both.',
+  c:'point = (3, 4)\nx, y = point\nprint(x, y)   # 3 4',
+  e:'Unpacking spreads the tuple values into separate names in the order they appear.'},
+ {p:'Make a single-item tuple containing just the number 5, then print its type to confirm it is a tuple.',
+  c:'one = (5,)\nprint(type(one))   # <class \'tuple\'>',
+  e:'The trailing comma is what makes it a tuple; without it, <code>(5)</code> would just be the integer 5.'},
+ {p:'Create a dictionary <code>student</code> with keys <code>"name"</code> and <code>"score"</code>, then print the value stored under <code>"name"</code>.',
+  c:'student = {"name": "Alex", "score": 88}\nprint(student["name"])   # Alex',
+  e:'A dictionary looks values up by their key rather than by position.'},
+ {p:'Starting from <code>student = {"name": "Alex"}</code>, add a <code>"score"</code> of 92 and print the whole dictionary.',
+  c:'student = {"name": "Alex"}\nstudent["score"] = 92\nprint(student)   # {\'name\': \'Alex\', \'score\': 92}',
+  e:'Assigning to a key that does not exist yet adds a new pair to the dictionary.'},
+ {p:'Given <code>student = {"name": "Alex", "score": 92}</code>, safely read the key <code>"age"</code> with <code>.get()</code> so it prints <code>None</code> instead of crashing.',
+  c:'student = {"name": "Alex", "score": 92}\nprint(student.get("age"))   # None',
+  e:'<code>.get()</code> returns None for a missing key instead of raising a KeyError like square-bracket access would.'},
+ {p:'Loop over the dictionary <code>{"name": "Alex", "score": 92}</code> with <code>.items()</code> and print each key and value together.',
+  c:'student = {"name": "Alex", "score": 92}\nfor key, value in student.items():\n    print(key, "=", value)\n# name = Alex\n# score = 92',
+  e:'<code>.items()</code> hands you both the key and its value on each pass of the loop.'},
+ {p:'Create a set from the list <code>[1, 2, 2, 3, 3, 3]</code> to remove duplicates, then print the set.',
+  c:'numbers = [1, 2, 2, 3, 3, 3]\nunique = set(numbers)\nprint(unique)   # {1, 2, 3}',
+  e:'A set keeps only unique items, so converting a list to a set strips out every duplicate.'},
+ {p:'Using the set <code>{"Alex", "Sam", "Jo"}</code>, print whether <code>"Sam"</code> is a member and whether <code>"Pat"</code> is a member.',
+  c:'enrolled = {"Alex", "Sam", "Jo"}\nprint("Sam" in enrolled)   # True\nprint("Pat" in enrolled)   # False',
+  e:'The <code>in</code> operator tests membership, which a set answers very quickly.'},
+ {p:'Given <code>group_a = {"Alex", "Sam", "Jo"}</code> and <code>group_b = {"Sam", "Jo", "Pat"}</code>, print the names that appear in both groups (their intersection).',
+  c:'group_a = {"Alex", "Sam", "Jo"}\ngroup_b = {"Sam", "Jo", "Pat"}\nprint(group_a & group_b)   # {\'Sam\', \'Jo\'}',
+  e:'The <code>&amp;</code> operator keeps only the items present in both sets, which is the intersection.'}
+];
+
+const NAV = [
+ {label:"4. Control Flow", locked:true, items:[
+   {label:"Conditional Statements"},{label:"The for Loop"},{label:"The while Loop"},{label:"break, continue & Loop else"},
+   {type:"tasks", label:"Module 4 Tasks", count:12}
+ ]},
+ {label:"5. Functions", locked:true, items:[
+   {label:"Defining Functions"},{label:"Parameters & Arguments"},{label:"Return Values & Scope"},{label:"Lambda Functions"},
+   {type:"tasks", label:"Module 5 Tasks", count:12}
+ ]},
+ {label:"6. Data Structures", items:[
+   {type:"lesson", i:0, label:"Lists"},
+   {type:"lesson", i:1, label:"Tuples"},
+   {type:"lesson", i:2, label:"Dictionaries"},
+   {type:"lesson", i:3, label:"Sets"},
+   {type:"tasks", label:"Module 6 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='6. Data Structures';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='6. Data Structures';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

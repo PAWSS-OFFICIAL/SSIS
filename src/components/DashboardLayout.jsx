@@ -80,7 +80,7 @@ const navItems = {
     { icon: Calendar, label: "Exam Timetable", path: "/exams" },
     { icon: Ticket, label: "Hall Ticket", path: "/hall-ticket" },
     { icon: Trophy, label: "Rewards", path: "/gamification" },
-
+    { icon: Code2, label: "PyLearn", path: "/student/pylearn" },
     { icon: Settings, label: "Settings", path: "/settings" },
   ],
   Parent: [
@@ -96,7 +96,7 @@ const navItems = {
 
 
 
-export const DashboardLayout = ({ children, title }) => {
+export const DashboardLayout = ({ children, title, noPadding = false }) => {
   const { user, logout } = useAuth();
   const { theme, toggleTheme, isDark } = useTheme();
   const { setIsOpen: setSearchOpen } = useSearch();
@@ -345,8 +345,8 @@ export const DashboardLayout = ({ children, title }) => {
         </header>
 
         {/* Page Content */}
-        <main className="p-4 lg:p-8 relative">
-          <div className="max-w-7xl mx-auto">
+        <main className={`${noPadding ? '' : 'p-4 lg:p-8'} relative h-full flex flex-col`}>
+          <div className={`${noPadding ? 'w-full h-full flex-1' : 'max-w-7xl mx-auto'}`}>
             {children}
           </div>
         </main>

@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 2: Variables &amp; Data Types</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="/logo.jpg" alt="SSIS Logo" style="height:24px; border-radius:4px; margin-right:8px;" />
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 1 / 4 — Foundations</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Variables",
+  starter:'# A variable is a name that refers to a value\ncourse = "Python"\nlevel = "Beginner"\nyear = 2026\n\nprint(course)\nprint(level)\nprint(year)\n',
+  html:`
+<p>A <strong>variable</strong> is a name that refers to a value. You create one by choosing a name, writing <code>=</code>, and putting a value on the right. From then on, the name stands in for that value wherever you use it.</p>
+<pre class="code">course = "Python"
+level = "Beginner"
+year = 2026
+
+print(course)   # Python
+print(year)     # 2026</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>The <code>=</code> sign here means "assign", not "is equal to". <code>course = "Python"</code> does not test anything — it puts the value <code>"Python"</code> into the name <code>course</code>. Testing for equality uses <code>==</code>, which you meet in Module 3.</p></div>
+
+<h2>A name is a label, not a box</h2>
+<p>It is tempting to picture a variable as a box that holds a value. A more accurate picture in Python is a <strong>label</strong> tied to a value that lives somewhere in memory. When you write <code>year = 2026</code>, Python creates the value <code>2026</code> and points the label <code>year</code> at it.</p>
+<p>This matters because two names can point at the <em>same</em> value, and reassigning one name simply moves its label — it does not disturb the other.</p>
+<pre class="code">a = 100
+b = a       # b now points at the same value as a
+a = 200     # a is re-pointed; b is untouched
+print(a)    # 200
+print(b)    # 100</pre>
+<div class="callout note"><span class="lbl">Note</span><p>In C, a variable <em>is</em> a fixed slot in memory and its type is decided up front. In Python a variable is only a name attached to an object, which is why it can be re-pointed freely — even to a value of a completely different type.</p></div>
+
+<h2>Naming rules and conventions</h2>
+<p>Python is strict about what a name may contain, and adds strong conventions on top of the rules.</p>
+<table>
+<tr><th>Rule</th><th>Example</th></tr>
+<tr><td>May contain letters, digits and underscores</td><td><code>total_score</code>, <code>value2</code></td></tr>
+<tr><td>Must not start with a digit</td><td><code>2fast</code> is invalid; <code>fast2</code> is fine</td></tr>
+<tr><td>No spaces or symbols</td><td>use <code>first_name</code>, not <code>first name</code></td></tr>
+<tr><td>Case-sensitive</td><td><code>Score</code> and <code>score</code> are different names</td></tr>
+<tr><td>Cannot be a reserved word</td><td><code>class</code>, <code>if</code>, <code>for</code> are off-limits</td></tr>
+</table>
+<p>The agreed style (PEP 8) is <strong>snake_case</strong>: lowercase words joined by underscores, like <code>student_count</code>. This differs from Java, which favours <code>camelCase</code>.</p>
+<div class="callout tip"><span class="lbl">Tip</span><p>Choose names that describe the value. <code>n</code> tells a reader nothing; <code>student_count</code> tells them everything. Clear names are the cheapest documentation you will ever write.</p></div>
+
+<h2>Python works out the type for you</h2>
+<p>You never declare a type in Python. You assign a value and Python decides what it is. This is called <strong>dynamic typing</strong>. The same name can hold a number now and a string later.</p>
+<pre class="code">data = 42
+print(type(data))   # &lt;class 'int'&gt;
+
+data = "forty-two"
+print(type(data))   # &lt;class 'str'&gt;</pre>
+<p>The <code>type()</code> function tells you what kind of value a name currently points at. In Java or C, reassigning across types like this would be a compile error; Python allows it, which is flexible but means you must keep track yourself.</p>
+
+<h2>Assigning several names at once</h2>
+<p>Python lets you assign to several names on one line, which is tidy and enables a neat swap trick.</p>
+<pre class="code">x, y = 10, 20      # x becomes 10, y becomes 20
+print(x, y)        # 10 20
+
+x, y = y, x        # swap them in a single line
+print(x, y)        # 20 10
+
+a = b = 0          # give several names the same starting value
+print(a, b)        # 0 0</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Using a name before assigning it. <code>print(count)</code> when <code>count</code> was never created raises a <code>NameError</code>. A name only exists after it has been assigned a value.</p></div>
+`
+},
+{
+  title:"Numbers",
+  starter:'# Python integers can be as big as you like\nbig = 2 ** 100\nprint(big)\n\n# Underscores make long numbers readable\npopulation = 8_000_000\nprint(population)\n',
+  html:`
+<p>Python has two everyday number types: <strong>integers</strong> (whole numbers, type <code>int</code>) and <strong>floats</strong> (numbers with a decimal point, type <code>float</code>). They look similar but behave differently, and the differences catch people out.</p>
+
+<h2>Integers can be any size</h2>
+<p>In many languages an integer has a fixed size — 32 or 64 bits — and breaks if it grows too big. Python integers have <strong>no size limit</strong> at all; they grow as large as your memory allows.</p>
+<pre class="code">print(2 ** 10)      # 1024
+print(2 ** 100)     # 1267650600228229401496703205376</pre>
+<p>That second line would overflow a normal 64-bit integer in C or Java. In Python it simply works.</p>
+
+<h3>Writing integers clearly</h3>
+<p>You can put underscores between digits to make big numbers readable. Python ignores them.</p>
+<pre class="code">population = 8_000_000
+print(population)   # 8000000</pre>
+<p>You can also write integers in other bases: binary with <code>0b</code>, hexadecimal with <code>0x</code>, and octal with <code>0o</code>. They are all just integers underneath.</p>
+<pre class="code">print(0b1010)   # 10  (binary)
+print(0xFF)     # 255 (hexadecimal)
+print(0o17)     # 15  (octal)</pre>
+
+<h2>Floats and the precision trap</h2>
+<p>Floats represent numbers with a fractional part. The surprise is that they cannot store most decimals exactly, because the computer keeps them in binary. This leads to a famous result.</p>
+<pre class="code">print(0.1 + 0.2)          # 0.30000000000000004
+print(0.1 + 0.2 == 0.3)   # False</pre>
+<p>This is not a bug in Python — every language that uses standard floating-point numbers behaves this way. The value <code>0.1</code> has no exact binary form, just as one third has no exact decimal form. The tiny errors add up.</p>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Never compare floats with <code>==</code> and expect exactness. Round first, or use <code>math.isclose</code> to ask whether two floats are near enough.</p></div>
+<pre class="code">import math
+
+total = 0.1 + 0.2
+print(round(total, 2))            # 0.3
+print(math.isclose(total, 0.3))   # True</pre>
+<div class="callout note"><span class="lbl">Note</span><p>When you need exact decimals — money is the classic case — use the <code>decimal</code> module, which stores numbers the way people write them rather than in binary.</p></div>
+
+<h2>The arithmetic operators</h2>
+<table>
+<tr><th>Operator</th><th>Meaning</th><th>Example</th><th>Result</th></tr>
+<tr><td><code>+</code></td><td>Add</td><td><code>5 + 2</code></td><td><code>7</code></td></tr>
+<tr><td><code>-</code></td><td>Subtract</td><td><code>5 - 2</code></td><td><code>3</code></td></tr>
+<tr><td><code>*</code></td><td>Multiply</td><td><code>5 * 2</code></td><td><code>10</code></td></tr>
+<tr><td><code>/</code></td><td>Divide (always a float)</td><td><code>5 / 2</code></td><td><code>2.5</code></td></tr>
+<tr><td><code>//</code></td><td>Floor divide (drops the remainder)</td><td><code>5 // 2</code></td><td><code>2</code></td></tr>
+<tr><td><code>%</code></td><td>Modulo (the remainder)</td><td><code>5 % 2</code></td><td><code>1</code></td></tr>
+<tr><td><code>**</code></td><td>Power</td><td><code>5 ** 2</code></td><td><code>25</code></td></tr>
+</table>
+<p>The one to remember is <code>/</code>. In Python 3, dividing with a single slash <strong>always</strong> gives a float, even when it divides evenly.</p>
+<pre class="code">print(10 / 2)    # 5.0  (a float — note the .0)
+print(10 // 2)   # 5    (an int)
+print(10 % 3)    # 1    (what is left over)</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Dividing by zero stops your program with a <code>ZeroDivisionError</code>. There is no "infinity" result for ordinary division — you must make sure the divisor is not zero first.</p></div>
+
+<h2>Mixing ints and floats</h2>
+<p>If you combine an int and a float, Python quietly promotes the result to a float, because a float can represent anything an int can.</p>
+<pre class="code">result = 4 + 2.0
+print(result)        # 6.0
+print(type(result))  # &lt;class 'float'&gt;</pre>
+`
+},
+{
+  title:"Strings",
+  starter:'# Strings hold text, in single or double quotes\nname = "CadetX"\ngreeting = "Hello, " + name + "!"\nprint(greeting)\n\n# f-strings slot values straight into the text\nscore = 95\nprint(f"Your score is {score} out of 100")\n',
+  html:`
+<p>A <strong>string</strong> is a piece of text — a sequence of characters. You write one by wrapping text in quotes. Python accepts single or double quotes, and they behave identically, so pick one and stay consistent.</p>
+<pre class="code">name = "CadetX"
+tagline = 'Launch your data career'
+print(name)
+print(tagline)</pre>
+<p>Use triple quotes when the text spans several lines.</p>
+<pre class="code">message = """Dear student,
+Welcome aboard.
+The CadetX team"""
+print(message)</pre>
+
+<h2>Strings cannot be changed in place</h2>
+<p>Strings are <strong>immutable</strong>: once created, a string can never be altered. Any operation that looks like it changes a string actually builds a brand-new string and leaves the original alone.</p>
+<pre class="code">word = "cat"
+# word[0] = "b"   # this would raise a TypeError
+word = "bat"       # instead, point the name at a new string
+print(word)        # bat</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Immutability is why every string method <em>returns</em> a new string instead of changing the original. If you want the change to stick, you must reassign it: <code>name = name.upper()</code>.</p></div>
+
+<h2>Reaching into a string: indexing and slicing</h2>
+<p>Each character has a position, called an <strong>index</strong>, starting at <code>0</code> — not <code>1</code>. Negative indexes count from the end, so <code>-1</code> is the last character.</p>
+<pre class="code">word = "Python"
+print(word[0])    # P  (first character)
+print(word[5])    # n  (sixth character)
+print(word[-1])   # n  (last character)</pre>
+<p>A <strong>slice</strong> takes a range of characters with <code>[start:stop:step]</code>. The <code>start</code> is included but the <code>stop</code> is <em>excluded</em>.</p>
+<pre class="code">text = "Programming"
+print(text[0:4])   # Prog     (positions 0,1,2,3 — 4 is left out)
+print(text[:4])    # Prog     (start defaults to 0)
+print(text[4:])    # ramming  (stop defaults to the end)
+print(text[::2])   # Pormig   (every second character)</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Excluding the stop looks odd at first, but it means <code>text[0:4]</code> gives exactly 4 characters, and <code>text[:n]</code> joined with <code>text[n:]</code> rebuilds the whole string with no overlap. It is a deliberate, tidy design.</p></div>
+
+<h2>Joining, repeating and measuring</h2>
+<pre class="code">first = "Cadet"
+second = "X"
+print(first + second)   # CadetX  (join with +)
+print("ab" * 3)         # ababab  (repeat with *)
+print(len("CadetX"))    # 6       (length)</pre>
+
+<h2>f-strings: the modern way to build text</h2>
+<p>Very often you want to drop a value into the middle of a sentence. The clearest way is an <strong>f-string</strong>: put <code>f</code> before the opening quote, then write <code>{ }</code> around any value you want inserted.</p>
+<pre class="code">name = "CadetX"
+score = 95
+print(f"{name} scored {score} out of 100")
+# CadetX scored 95 out of 100</pre>
+<p>You can format the inserted value too. A common one is fixing the number of decimal places with <code>:.2f</code>.</p>
+<pre class="code">price = 3
+print(f"Total: £{price:.2f}")   # Total: £3.00</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p>Prefer f-strings over gluing pieces with <code>+</code>. They are shorter, read like the final sentence, and avoid the "cannot join text and number" error you get from <code>+</code>.</p></div>
+
+<h2>Useful string methods</h2>
+<p>Methods are actions you call on a string with a dot. Because strings are immutable, each one returns a new string.</p>
+<table>
+<tr><th>Method</th><th>What it does</th><th>Example → result</th></tr>
+<tr><td><code>.upper()</code></td><td>Uppercase copy</td><td><code>"hi".upper()</code> → <code>"HI"</code></td></tr>
+<tr><td><code>.lower()</code></td><td>Lowercase copy</td><td><code>"HI".lower()</code> → <code>"hi"</code></td></tr>
+<tr><td><code>.strip()</code></td><td>Trim surrounding spaces</td><td><code>" hi ".strip()</code> → <code>"hi"</code></td></tr>
+<tr><td><code>.replace(a, b)</code></td><td>Swap text for other text</td><td><code>"cat".replace("c","b")</code> → <code>"bat"</code></td></tr>
+<tr><td><code>.split(sep)</code></td><td>Break into a list</td><td><code>"a,b".split(",")</code> → <code>["a","b"]</code></td></tr>
+</table>
+
+<h2>Escape sequences</h2>
+<p>Some characters are hard to type inside a string, so Python uses a backslash to represent them.</p>
+<table>
+<tr><th>Sequence</th><th>Meaning</th></tr>
+<tr><td><code>\\n</code></td><td>New line</td></tr>
+<tr><td><code>\\t</code></td><td>Tab</td></tr>
+<tr><td><code>\\"</code></td><td>A double quote inside double quotes</td></tr>
+<tr><td><code>\\\\</code></td><td>A single backslash</td></tr>
+</table>
+<pre class="code">print("Line one\\nLine two")
+# Line one
+# Line two</pre>
+<p>If you want the backslashes taken literally — file paths are the usual reason — put <code>r</code> before the string to make a <strong>raw string</strong>.</p>
+<pre class="code">print(r"C:\\Users\\data")   # C:\\Users\\data</pre>
+`
+},
+{
+  title:"Booleans & Type Conversion",
+  starter:'# Booleans are either True or False (note the capitals)\nis_enrolled = True\nhas_paid = False\nprint(is_enrolled)\nprint(is_enrolled and has_paid)\n\n# Convert between types explicitly\nage_text = "30"\nage = int(age_text)\nprint(age + 1)\n',
+  html:`
+<p>A <strong>Boolean</strong> is the simplest type of all: it is either <code>True</code> or <code>False</code>. Booleans are how a program answers yes/no questions, and they are what every comparison produces.</p>
+<pre class="code">is_enrolled = True
+has_paid = False
+print(5 &gt; 3)     # True
+print(5 == 3)    # False</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>The values are <code>True</code> and <code>False</code> with a capital first letter. Writing <code>true</code> or <code>false</code> in lowercase gives a <code>NameError</code>, because Python thinks you are naming a variable that does not exist. This catches people coming from Java or JavaScript.</p></div>
+
+<h2>Booleans are secretly numbers</h2>
+<p>Under the hood, <code>True</code> equals <code>1</code> and <code>False</code> equals <code>0</code>. You can even do arithmetic with them, which is occasionally handy for counting.</p>
+<pre class="code">print(True + True)    # 2
+print(False + 5)      # 5</pre>
+
+<h2>Truthiness: every value is either "truthy" or "falsy"</h2>
+<p>Python can treat <em>any</em> value as a Boolean when it needs to. Most values count as <code>True</code>, but a short, specific list counts as <code>False</code>. These are the <strong>falsy</strong> values.</p>
+<table>
+<tr><th>Counts as False</th><th>Counts as True</th></tr>
+<tr><td><code>0</code>, <code>0.0</code></td><td>any other number</td></tr>
+<tr><td><code>""</code> (empty string)</td><td>any non-empty string</td></tr>
+<tr><td><code>[]</code>, <code>{}</code> (empty collections)</td><td>any non-empty collection</td></tr>
+<tr><td><code>None</code>, <code>False</code></td><td>most other things</td></tr>
+</table>
+<p>The <code>bool()</code> function shows you how any value is judged.</p>
+<pre class="code">print(bool(0))      # False
+print(bool(""))     # False
+print(bool("hi"))   # True
+print(bool(42))     # True</pre>
+<div class="callout note"><span class="lbl">Note</span><p>This is why you will later be able to write <code>if name:</code> to mean "if name is not empty". You are relying on truthiness — one of Python's most useful shortcuts.</p></div>
+
+<h2>Changing one type into another</h2>
+<p>Turning a value of one type into another is called <strong>type conversion</strong> or <strong>casting</strong>. You do it by calling the type name like a function.</p>
+<pre class="code">print(int("42"))     # 42     (string to int)
+print(float("3.5"))  # 3.5    (string to float)
+print(str(100))      # "100"  (number to string)
+print(int(3.9))      # 3      (float to int — it truncates)</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Converting <code>int(3.9)</code> gives <code>3</code>, not <code>4</code> — it chops off the decimal part rather than rounding. Use <code>round(3.9)</code> if you want <code>4</code>.</p></div>
+<p>Conversion only works when the text makes sense as that number. <code>int("abc")</code> raises a <code>ValueError</code>, and so does <code>int("3.5")</code> — you cannot jump straight from a decimal string to an int.</p>
+
+<h2>Python will not mix text and numbers for you</h2>
+<p>Unlike JavaScript, Python refuses to join a string and a number automatically. You must convert first.</p>
+<pre class="code">age = 30
+# print("Age: " + age)      # TypeError: can only join str to str
+print("Age: " + str(age))    # Age: 30
+print(f"Age: {age}")         # Age: 30  (the tidy way)</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p>This strictness is a feature, not an annoyance. Languages that guess how to mix types produce silent, confusing bugs. Python makes you say what you mean, so an f-string or an explicit <code>str()</code> is the fix.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Create a variable named <code>course</code> that holds the text <code>Python</code>, then print it.',
+  c:'course = "Python"\nprint(course)',
+  e:'The <code>=</code> sign assigns the value on the right to the name on the left, and <code>print()</code> then displays whatever that name points to.'},
+ {p:'Create <code>x = 5</code> and <code>y = 10</code>, swap their values in a single line using tuple unpacking, then print both.',
+  c:'x = 5\ny = 10\nx, y = y, x\nprint(x)   # 10\nprint(y)   # 5',
+  e:'Writing <code>x, y = y, x</code> builds the pair on the right first and then unpacks it into the names on the left, swapping them without a temporary variable.'},
+ {p:'Print the value of 2 raised to the power 100 to show that Python integers have no size limit.',
+  c:'print(2 ** 100)\n# 1267650600228229401496703205376',
+  e:'The <code>**</code> operator raises a number to a power, and Python grows the integer as large as needed rather than overflowing.'},
+ {p:'Store one million in a variable using underscores for readability, then print it.',
+  c:'population = 1_000_000\nprint(population)   # 1000000',
+  e:'Underscores between digits are ignored by Python and exist purely to make long numbers easier to read.'},
+ {p:'Print the results of <code>7 / 2</code>, <code>7 // 2</code> and <code>7 % 2</code> on separate lines, and notice how the three kinds of division differ.',
+  c:'print(7 / 2)    # 3.5  (true division, always a float)\nprint(7 // 2)   # 3    (floor division, drops the remainder)\nprint(7 % 2)    # 1    (modulo, the remainder)',
+  e:'Single-slash division always returns a float, double-slash keeps only the whole part, and the percent sign gives what is left over.'},
+ {p:'Add <code>0.1 + 0.2</code> and print the raw result, then print the same total rounded to 2 decimal places.',
+  c:'total = 0.1 + 0.2\nprint(total)              # 0.30000000000000004\nprint(round(total, 2))    # 0.3',
+  e:'Floats cannot store most decimals exactly, so the raw sum is slightly off; rounding gives the clean value you expected.'},
+ {p:'Given <code>name = "CadetX"</code>, print its length and its last character (use a negative index for the last one).',
+  c:'name = "CadetX"\nprint(len(name))   # 6\nprint(name[-1])    # X',
+  e:'<code>len()</code> counts the characters, and index <code>-1</code> reaches the last character by counting from the end.'},
+ {p:'Take the string <code>Programming</code> and print only its first four letters using a slice.',
+  c:'word = "Programming"\nprint(word[0:4])   # Prog',
+  e:'A slice <code>[0:4]</code> includes positions 0 to 3 and excludes position 4, giving exactly the first four characters.'},
+ {p:'Using an f-string, print <code>Name: CadetX, Score: 95</code> from a name variable and a score variable.',
+  c:'name = "CadetX"\nscore = 95\nprint(f"Name: {name}, Score: {score}")',
+  e:'The <code>f</code> before the quote lets you drop variables straight into the text inside curly braces, with no manual joining.'},
+ {p:'Convert the string <code>"42"</code> into an integer, add 8 to it, and print the result.',
+  c:'value = int("42")\nprint(value + 8)   # 50',
+  e:'<code>int()</code> turns the text into a real number, so the addition works arithmetically instead of joining text.'},
+ {p:'The line <code>print("Score: " + 95)</code> raises an error. Fix it so it prints <code>Score: 95</code>.',
+  c:'print("Score: " + str(95))\n# or, more neatly:\nprint(f"Score: {95}")',
+  e:'Python will not join a string to a number, so you either convert the number with <code>str()</code> or place it inside an f-string.'},
+ {p:'Given <code>full = "  cadetx academy  "</code>, print it with the surrounding spaces removed and all letters uppercase. Then print <code>bool("")</code> and <code>bool("hi")</code>.',
+  c:'full = "  cadetx academy  "\nprint(full.strip().upper())   # CADETX ACADEMY\nprint(bool(""))               # False\nprint(bool("hi"))             # True',
+  e:'<code>.strip()</code> trims the spaces and <code>.upper()</code> capitalises the copy, while <code>bool()</code> shows that an empty string is falsy and a non-empty one is truthy.'}
+];
+
+const NAV = [
+ {label:"1. Getting Started", locked:true, items:[
+   {label:"What is Python?"},{label:"Python Syntax & Indentation"},{label:"Comments"},
+   {type:"tasks", label:"Module 1 Tasks", count:12}
+ ]},
+ {label:"2. Variables & Data Types", items:[
+   {type:"lesson", i:0, label:"Variables"},
+   {type:"lesson", i:1, label:"Numbers"},
+   {type:"lesson", i:2, label:"Strings"},
+   {type:"lesson", i:3, label:"Booleans & Type Conversion"},
+   {type:"tasks", label:"Module 2 Tasks", count:12}
+ ]},
+ {label:"3. Operators", locked:true, items:[
+   {label:"Arithmetic & Assignment"},{label:"Comparison Operators"},{label:"Logical & Membership"},{label:"Bitwise Operators"},
+   {type:"tasks", label:"Module 3 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='2. Variables & Data Types';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='2. Variables & Data Types';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

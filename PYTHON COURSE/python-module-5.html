@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 5: Functions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo-pill"><span class="logo-cadet">Cadet</span><span class="logo-x">X</span></div>
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 2 / 4 — Intermediate</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Defining Functions",
+  starter:'# A function is a named block of code you can run whenever you like\ndef greet():\n    print("Hello from CadetX")\n\ngreet()   # this line runs the body\ngreet()   # call it as often as you want\n',
+  html:`
+<p>As programs grow, you find yourself writing the same few lines again and again. A <strong>function</strong> is a named block of code you write once and then run whenever you like, just by using its name. Functions keep programs short, organised, and easy to change.</p>
+
+<h2>Defining and calling a function</h2>
+<p>You create a function with the <code>def</code> keyword, a name, a pair of brackets, and a colon. The indented lines below are the function's body. Writing the definition does not run it — the body only runs when you <strong>call</strong> the function by writing its name followed by brackets.</p>
+<pre class="code">def greet():
+    print("Hello from CadetX")
+
+greet()   # this line actually runs the body
+greet()   # you can call it as often as you like
+# Hello from CadetX
+# Hello from CadetX</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Forgetting the brackets when calling. <code>greet</code> on its own refers to the function without running it; <code>greet()</code> runs it. This is a very common source of "nothing happened" confusion.</p></div>
+
+<h2>Define before you call</h2>
+<p>Python reads a file top to bottom, so a function must be defined <em>above</em> the line that calls it. Calling a function before its <code>def</code> raises a <code>NameError</code>.</p>
+<pre class="code">say_hello()   # NameError: say_hello is not defined yet
+
+def say_hello():
+    print("Hi")</pre>
+
+<h2>Describing a function with a docstring</h2>
+<p>Recall the docstring from Module 1: a triple-quoted line placed as the very first thing inside the function. It explains what the function does, for anyone reading the code later.</p>
+<pre class="code">def greet():
+    """Print the standard CadetX greeting."""
+    print("Hello from CadetX")</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p>Give functions verb-like names that say what they do: <code>calculate_total</code>, <code>send_email</code>, <code>greet</code>. A good name means a reader understands a call without reading the body.</p></div>
+`
+},
+{
+  title:"Parameters & Arguments",
+  starter:'# Parameters let you pass information into a function\ndef greet(name):\n    print(f"Hello, {name}")\n\ngreet("Sam")\ngreet("Alex")\n',
+  html:`
+<p>A function becomes far more useful when you can hand it information to work with. Those inputs are called <strong>parameters</strong> when you list them in the definition, and <strong>arguments</strong> when you supply them in the call.</p>
+<pre class="code">def greet(name):          # name is a parameter
+    print(f"Hello, {name}")
+
+greet("Sam")              # "Sam" is an argument
+# Hello, Sam</pre>
+
+<h2>Positional and keyword arguments</h2>
+<p>By default, arguments are matched to parameters by <strong>position</strong> — first to first, second to second. You can also pass them by name, as <strong>keyword arguments</strong>, in which case the order does not matter.</p>
+<pre class="code">def describe(name, level):
+    print(f"{name} is at {level} level")
+
+describe("Sam", "Beginner")               # positional
+describe(level="Advanced", name="Alex")   # keyword — order free
+# Sam is at Beginner level
+# Alex is at Advanced level</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Supplying the wrong number of arguments raises a <code>TypeError</code>. A function that expects two arguments must be given two. Keyword arguments help by making each value's meaning obvious at the call.</p></div>
+
+<h2>Default values</h2>
+<p>A parameter can have a <strong>default</strong>, used when the caller does not supply that argument.</p>
+<pre class="code">def power(base, exponent=2):   # exponent defaults to 2
+    return base ** exponent
+
+print(power(5))      # 25  (uses the default 2)
+print(power(5, 3))   # 125 (overrides it)</pre>
+
+<h2>The mutable default trap</h2>
+<p>This is one of Python's most famous surprises. A default value is created <strong>once</strong>, when the function is defined, and then <em>shared</em> across every call. If that default is a list, changes pile up between calls.</p>
+<pre class="code">def add_item(item, basket=[]):   # dangerous shared default
+    basket.append(item)
+    return basket
+
+print(add_item("apple"))   # ['apple']
+print(add_item("pear"))    # ['apple', 'pear']  &lt;- unexpected!</pre>
+<p>The fix is to default to <code>None</code> and create a fresh list inside the function.</p>
+<pre class="code">def add_item(item, basket=None):
+    if basket is None:
+        basket = []          # a new list on every call
+    basket.append(item)
+    return basket
+
+print(add_item("apple"))   # ['apple']
+print(add_item("pear"))    # ['pear']</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Never use a list, dictionary, or other changeable value as a default. Default to <code>None</code> and build the real default inside the function, as shown above.</p></div>
+`
+},
+{
+  title:"Return Values & Scope",
+  starter:'# return hands a value back to the caller\ndef add(a, b):\n    return a + b\n\ntotal = add(3, 4)\nprint(total)          # 7\nprint(add(10, 5) * 2) # 30\n',
+  html:`
+<p>Printing shows a value on the screen. <strong>Returning</strong> hands a value back to the code that called the function, so it can be stored and used further. Understanding this difference is the single biggest step in learning functions.</p>
+
+<h2>return sends a value back</h2>
+<pre class="code">def add(a, b):
+    return a + b        # hand the result back to the caller
+
+total = add(3, 4)       # catch the returned value
+print(total)            # 7
+print(add(10, 5) * 2)   # 30 — the returned value is used directly</pre>
+
+<h2>print is not return</h2>
+<p>A function that <code>print</code>s a value shows it but gives nothing back; its result is <code>None</code>. A function that <code>return</code>s a value can be used in further calculations. Beginners mix these up constantly.</p>
+<pre class="code">def double_print(n):
+    print(n * 2)        # displays it, returns None
+
+def double_return(n):
+    return n * 2        # gives the value back
+
+result = double_return(5)
+print(result + 1)       # 11 — works, because we received a value
+# double_print(5) + 1   # TypeError: it returned None, not a number</pre>
+<div class="callout note"><span class="lbl">Note</span><p>A function with no <code>return</code> statement automatically returns <code>None</code>. Also, <code>return</code> ends the function on the spot — any lines after it do not run.</p></div>
+
+<h2>Returning several values</h2>
+<p>A function can return more than one value by separating them with commas. Python bundles them into a tuple, which you can unpack into separate names.</p>
+<pre class="code">def min_max(numbers):
+    return min(numbers), max(numbers)
+
+low, high = min_max([4, 9, 1, 7])
+print(low, high)   # 1 9</pre>
+
+<h2>Scope: where a name lives</h2>
+<p>A variable created inside a function is <strong>local</strong> to it: it exists only while the function runs and cannot be seen from outside. This is a feature — functions do not accidentally trample on each other's names.</p>
+<pre class="code">def make_message():
+    greeting = "hello"     # local to this function
+    return greeting
+
+print(make_message())      # hello
+# print(greeting)          # NameError: greeting does not exist out here</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Code can read a global variable from inside a function, but to reassign one you would need the <code>global</code> keyword — which is best avoided. Passing values in as arguments and handing results back with <code>return</code> is cleaner and easier to follow.</p></div>
+`
+},
+{
+  title:"Lambda Functions",
+  starter:'# A lambda is a tiny one-line function\nsquare = lambda x: x * x\nprint(square(5))   # 25\n\n# handy for passing behaviour to other functions\nwords = ["banana", "fig", "cherry"]\nprint(sorted(words, key=lambda w: len(w)))\n',
+  html:`
+<p>A <strong>lambda</strong> is a tiny, unnamed function written on a single line. It is useful when you need a quick throwaway function to hand to another function, and writing a full <code>def</code> would be overkill.</p>
+
+<h2>The shape of a lambda</h2>
+<p>Write <code>lambda</code>, then the parameters, a colon, and a single expression. The value of that expression is returned automatically — there is no <code>return</code> keyword.</p>
+<pre class="code">square = lambda x: x * x
+print(square(5))   # 25
+
+# exactly the same as:
+def square_fn(x):
+    return x * x</pre>
+<div class="callout note"><span class="lbl">Note</span><p>A lambda can hold only a <em>single expression</em> — no loops, no multiple statements, no assignments. The moment you need more than one line, use a normal <code>def</code>. That is not a limitation to fight; it is a signal to switch tools.</p></div>
+
+<h2>Where lambdas shine: passing behaviour</h2>
+<p>Some functions take another function as an argument. <code>sorted()</code> can take a <code>key</code> that decides what to sort by, and a lambda is the neat way to supply it.</p>
+<pre class="code">words = ["banana", "fig", "cherry"]
+by_length = sorted(words, key=lambda w: len(w))
+print(by_length)   # ['fig', 'cherry', 'banana']</pre>
+
+<h2>map and filter</h2>
+<p>Two more functions that take a function: <code>map()</code> applies it to every item, and <code>filter()</code> keeps only the items for which it is true.</p>
+<pre class="code">numbers = [1, 2, 3, 4]
+
+doubled = list(map(lambda n: n * 2, numbers))
+print(doubled)   # [2, 4, 6, 8]
+
+evens = list(filter(lambda n: n % 2 == 0, numbers))
+print(evens)     # [2, 4]</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p>Do not force lambdas everywhere. If a named <code>def</code> reads more clearly, use it. Lambdas earn their place only when the function is short and used right where it is written.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Define a function <code>greet()</code> that prints <code>Hello from CadetX</code>, then call it.',
+  c:'def greet():\n    print("Hello from CadetX")\n\ngreet()',
+  e:'The <code>def</code> creates the function and the final line calls it, running the body once.'},
+ {p:'Define <code>greet(name)</code> that prints a personalised hello using an f-string, then call it with a name.',
+  c:'def greet(name):\n    print(f"Hello, {name}")\n\ngreet("Sam")',
+  e:'The value passed in the call is bound to the parameter <code>name</code> and used inside the function.'},
+ {p:'Define <code>add(a, b)</code> that <em>returns</em> the sum of its two parameters, then print <code>add(3, 4)</code>.',
+  c:'def add(a, b):\n    return a + b\n\nprint(add(3, 4))   # 7',
+  e:'<code>return</code> hands the sum back so it can be printed or used in further code.'},
+ {p:'Define <code>power(base, exponent=2)</code> that returns <code>base</code> raised to <code>exponent</code>, with the exponent defaulting to 2. Print <code>power(5)</code> and <code>power(5, 3)</code>.',
+  c:'def power(base, exponent=2):\n    return base ** exponent\n\nprint(power(5))      # 25\nprint(power(5, 3))   # 125',
+  e:'When the caller omits the exponent the default of 2 is used, and supplying a value overrides it.'},
+ {p:'Define <code>describe(name, level)</code> that prints both values, then call it once using keyword arguments in any order.',
+  c:'def describe(name, level):\n    print(f"{name} is {level}")\n\ndescribe(level="Advanced", name="Alex")',
+  e:'Naming the arguments in the call lets you pass them in any order without relying on position.'},
+ {p:'Define <code>min_max(numbers)</code> that returns both the smallest and largest value, then unpack and print them for <code>[4, 9, 1, 7]</code>.',
+  c:'def min_max(numbers):\n    return min(numbers), max(numbers)\n\nlow, high = min_max([4, 9, 1, 7])\nprint(low, high)   # 1 9',
+  e:'Returning two comma-separated values produces a tuple, which is unpacked into two separate names.'},
+ {p:'Define <code>area(width, height)</code> with a docstring that returns width times height. Print <code>area(4, 5)</code>.',
+  c:'def area(width, height):\n    """Return the area of a rectangle."""\n    return width * height\n\nprint(area(4, 5))   # 20',
+  e:'The triple-quoted first line documents the function, and <code>return</code> gives the calculated area back.'},
+ {p:'The function below only prints, so it cannot be used in a sum. Rewrite it to <code>return</code> the value, then print <code>double(5) + 1</code>.<br><span style="font-family:monospace;font-size:12.5px;color:#9fc0ff">def double(n):<br>&nbsp;&nbsp;&nbsp;&nbsp;print(n * 2)</span>',
+  c:'def double(n):\n    return n * 2\n\nprint(double(5) + 1)   # 11',
+  e:'Returning the value instead of printing it lets the result take part in the addition.'},
+ {p:'Show that a variable created inside a function is local: define a function that sets a variable and returns it, then print the returned value.',
+  c:'def make_code():\n    code = "CX-2026"\n    return code\n\nprint(make_code())   # CX-2026',
+  e:'The local variable exists only inside the function, so its value must be handed back with <code>return</code> to be used outside.'},
+ {p:'Create a lambda called <code>square</code> that returns its argument multiplied by itself, then print <code>square(6)</code>.',
+  c:'square = lambda x: x * x\nprint(square(6))   # 36',
+  e:'The lambda is a one-line function whose single expression is returned automatically.'},
+ {p:'Sort the list <code>["banana", "fig", "cherry"]</code> by word length using <code>sorted()</code> and a lambda <code>key</code>.',
+  c:'words = ["banana", "fig", "cherry"]\nprint(sorted(words, key=lambda w: len(w)))\n# [\'fig\', \'cherry\', \'banana\']',
+  e:'The key lambda tells <code>sorted()</code> to compare words by their length rather than alphabetically.'},
+ {p:'Define <code>grade(score)</code> returning <code>A</code> for 70 or more, <code>B</code> for 50 or more, otherwise <code>Fail</code>. Then loop over <code>[80, 55, 30]</code> and print each score with its grade.',
+  c:'def grade(score):\n    if score >= 70:\n        return "A"\n    elif score >= 50:\n        return "B"\n    else:\n        return "Fail"\n\nfor s in [80, 55, 30]:\n    print(s, grade(s))\n# 80 A\n# 55 B\n# 30 Fail',
+  e:'The function returns a letter for each score, and the loop calls it once for every item in the list.'}
+];
+
+const NAV = [
+ {label:"4. Control Flow", locked:true, items:[
+   {label:"Conditional Statements"},{label:"The for Loop"},{label:"The while Loop"},{label:"break, continue & Loop else"},
+   {type:"tasks", label:"Module 4 Tasks", count:12}
+ ]},
+ {label:"5. Functions", items:[
+   {type:"lesson", i:0, label:"Defining Functions"},
+   {type:"lesson", i:1, label:"Parameters & Arguments"},
+   {type:"lesson", i:2, label:"Return Values & Scope"},
+   {type:"lesson", i:3, label:"Lambda Functions"},
+   {type:"tasks", label:"Module 5 Tasks", count:12}
+ ]},
+ {label:"6. Data Structures", locked:true, items:[
+   {label:"Lists"},{label:"Tuples"},{label:"Dictionaries"},{label:"Sets"},
+   {type:"tasks", label:"Module 6 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='5. Functions';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='5. Functions';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

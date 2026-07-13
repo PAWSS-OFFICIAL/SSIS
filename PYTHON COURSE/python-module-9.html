@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 9: Files & Exceptions</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo-pill"><span class="logo-cadet">Cadet</span><span class="logo-x">X</span></div>
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 3 / 4 — Advanced</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Reading & Writing Files",
+  starter:'# Writing text to a file\nwith open("notes.txt", "w") as f:\n    f.write("Hello from CadetX\\n")\n    f.write("Learning Python\\n")\n\n# Reading it back\nwith open("notes.txt", "r") as f:\n    print(f.read())\n',
+  html:`
+<p>Programs often need to keep data after they stop running, or read data prepared earlier. That means working with <strong>files</strong> on disk. Python handles files through the built-in <code>open()</code> function, which connects your program to a file so you can read from it or write to it.</p>
+
+<h2>Opening a file: the mode matters</h2>
+<p><code>open()</code> takes the file name and a <strong>mode</strong> that says what you intend to do. Choosing the wrong mode is the most common file mistake, so learn these four.</p>
+<table>
+<tr><th>Mode</th><th>Meaning</th></tr>
+<tr><td><code>"r"</code></td><td>Read (the default). Errors if the file is missing.</td></tr>
+<tr><td><code>"w"</code></td><td>Write. Creates the file, or <strong>wipes</strong> it if it exists.</td></tr>
+<tr><td><code>"a"</code></td><td>Append. Adds to the end, keeping what is there.</td></tr>
+<tr><td><code>"x"</code></td><td>Create. Errors if the file already exists.</td></tr>
+</table>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Mode <code>"w"</code> empties the file the moment you open it, even before you write anything. If you meant to add to a file rather than replace it, use <code>"a"</code>.</p></div>
+
+<h2>Writing to a file</h2>
+<p>The recommended way to open a file is with a <code>with</code> block, which you will meet fully in the Context Managers lesson. It guarantees the file is closed for you when the block ends.</p>
+<pre class="code">with open("notes.txt", "w") as f:
+    f.write("Hello from CadetX\\n")   # write() does NOT add a newline
+    f.write("Learning Python\\n")     # so add \\n yourself</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Unlike <code>print()</code>, the <code>write()</code> method does not add a newline. Forget the <code>\\n</code> and everything runs together on one line. Add it yourself at the end of each piece of text.</p></div>
+
+<h2>Reading from a file</h2>
+<p>There are three common ways to read. <code>.read()</code> gives the whole file as one string; looping over the file gives one line at a time, which is the most memory-friendly.</p>
+<pre class="code"># The whole file at once
+with open("notes.txt", "r") as f:
+    content = f.read()
+    print(content)
+
+# One line at a time (best for large files)
+with open("notes.txt", "r") as f:
+    for line in f:
+        print(line.strip())   # strip removes the trailing newline</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Each line you read keeps its newline character on the end, so printing lines can produce double spacing. <code>line.strip()</code> removes that trailing newline, which is why it appears so often in file-reading code.</p></div>
+
+<h2>Closing files</h2>
+<p>If you open a file without <code>with</code>, you must close it yourself with <code>f.close()</code>, or the file may stay locked and unsaved. The <code>with</code> block does this automatically, which is exactly why it is preferred.</p>
+<pre class="code">f = open("notes.txt", "r")
+content = f.read()
+f.close()          # you must remember this without a with block</pre>
+`
+},
+{
+  title:"CSV & JSON",
+  starter:'import json\n\nstudent = {"name": "Alex", "score": 88}\n\n# Turn a Python object into a JSON string\ntext = json.dumps(student)\nprint(text)          # {"name": "Alex", "score": 88}\n\n# Turn a JSON string back into a Python object\nback = json.loads(text)\nprint(back["name"])  # Alex\n',
+  html:`
+<p>Plain text files are fine for simple notes, but data usually has structure — rows and columns, or nested records. Two formats dominate: <strong>CSV</strong> for tables and <strong>JSON</strong> for structured data. Python has a module for each.</p>
+
+<h2>CSV: comma-separated values</h2>
+<p>A CSV file is a table in plain text: each line is a row, and commas separate the columns. Spreadsheets read and write them directly. The <code>csv</code> module handles the fiddly details like quoting.</p>
+<pre class="code">import csv
+
+# Writing rows
+with open("scores.csv", "w", newline="") as f:
+    writer = csv.writer(f)
+    writer.writerow(["name", "score"])   # the header row
+    writer.writerow(["Alex", 88])
+    writer.writerow(["Sam", 92])
+
+# Reading rows
+with open("scores.csv", "r") as f:
+    reader = csv.reader(f)
+    for row in reader:
+        print(row)      # each row is a list: ['name', 'score'] ...</pre>
+<div class="callout note"><span class="lbl">Note</span><p>When writing CSV, open the file with <code>newline=""</code>. Without it, some systems add blank lines between rows. It is a small detail that saves a confusing bug.</p></div>
+<p><code>csv.DictReader</code> is often nicer: it uses the header row to give each value a name, so you read by column name instead of by position.</p>
+<pre class="code">import csv
+
+with open("scores.csv", "r") as f:
+    reader = csv.DictReader(f)
+    for row in reader:
+        print(row["name"], row["score"])   # read by column name</pre>
+
+<h2>JSON: structured data as text</h2>
+<p>JSON (JavaScript Object Notation) stores nested data — dictionaries and lists — as text. It maps almost perfectly onto Python: a JSON object becomes a dict, a JSON array becomes a list. The <code>json</code> module converts between them.</p>
+<table>
+<tr><th>Function</th><th>Direction</th></tr>
+<tr><td><code>json.dumps(obj)</code></td><td>Python object → JSON string</td></tr>
+<tr><td><code>json.loads(text)</code></td><td>JSON string → Python object</td></tr>
+<tr><td><code>json.dump(obj, f)</code></td><td>Python object → file</td></tr>
+<tr><td><code>json.load(f)</code></td><td>file → Python object</td></tr>
+</table>
+<pre class="code">import json
+
+student = {"name": "Alex", "scores": [88, 92, 79]}
+
+text = json.dumps(student)      # object to string
+print(text)
+
+back = json.loads(text)         # string back to object
+print(back["scores"][0])        # 88</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>The names ending in <strong>s</strong> work with strings (<code>dumps</code>/<code>loads</code>); the ones without work with files (<code>dump</code>/<code>load</code>). Mixing them up is a frequent slip. Also, all JSON keys become strings, so a dict with number keys comes back with string keys.</p></div>
+`
+},
+{
+  title:"Exceptions & try / except",
+  starter:'# try runs risky code; except catches the error if it happens\ntry:\n    number = int("not a number")\nexcept ValueError:\n    print("That was not a valid number")\n\nprint("The program keeps going")\n',
+  html:`
+<p>When something goes wrong at runtime — dividing by zero, converting bad text to a number, opening a missing file — Python raises an <strong>exception</strong> and, by default, stops the program. You have met several already: <code>ValueError</code>, <code>TypeError</code>, <code>ZeroDivisionError</code>, <code>KeyError</code>. This lesson shows how to catch them and carry on.</p>
+
+<h2>try and except</h2>
+<p>Put the risky code in a <code>try</code> block. If an exception happens, Python jumps to the matching <code>except</code> block instead of crashing.</p>
+<pre class="code">try:
+    result = 10 / 0
+except ZeroDivisionError:
+    print("You cannot divide by zero")
+# You cannot divide by zero</pre>
+
+<h2>Catch specific exceptions</h2>
+<p>Always name the exception you expect. Different problems can then be handled differently, and unexpected errors still surface instead of being hidden.</p>
+<pre class="code">try:
+    age = int(user_input)
+except ValueError:
+    print("Please enter a whole number")
+except TypeError:
+    print("No value was supplied")</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Avoid a bare <code>except:</code> that catches everything. It hides real bugs — even a typo in your own code gets swallowed silently. Catch the specific exceptions you expect, and let the rest be seen.</p></div>
+
+<h2>else and finally</h2>
+<p>Two optional blocks complete the picture. <code>else</code> runs only if no exception happened; <code>finally</code> runs no matter what, which is perfect for clean-up.</p>
+<pre class="code">try:
+    number = int("42")
+except ValueError:
+    print("Bad input")
+else:
+    print(f"Success: {number}")   # runs because there was no error
+finally:
+    print("This always runs")     # runs whether or not there was an error
+# Success: 42
+# This always runs</pre>
+
+<h2>Raising your own exceptions</h2>
+<p>You can trigger an exception yourself with <code>raise</code>, to stop bad data early with a clear message.</p>
+<pre class="code">def set_age(age):
+    if age &lt; 0:
+        raise ValueError("Age cannot be negative")
+    return age
+
+try:
+    set_age(-5)
+except ValueError as error:
+    print(error)   # Age cannot be negative</pre>
+<div class="callout note"><span class="lbl">Note</span><p><code>except ValueError as error</code> captures the exception object in a name, so you can read its message. This is the standard way to inspect what actually went wrong.</p></div>
+`
+},
+{
+  title:"Context Managers",
+  starter:'# with handles setup and clean-up for you\nwith open("notes.txt", "w") as f:\n    f.write("Saved safely\\n")\n# the file is closed automatically here, even if an error occurred\n\nprint("File is now closed")\n',
+  html:`
+<p>A <strong>context manager</strong> is an object that sets something up and then guarantees it is cleaned up afterwards, even if an error happens in between. You use one with the <code>with</code> statement. You have already seen it opening files — this lesson explains what it is really doing.</p>
+
+<h2>Why with exists</h2>
+<p>Opening a file reserves a resource that must be released. Forget to close it and you can lose data or lock the file. Doing it safely by hand needs <code>try</code>/<code>finally</code>.</p>
+<pre class="code"># The manual, error-prone way
+f = open("notes.txt", "w")
+try:
+    f.write("hello")
+finally:
+    f.close()        # must remember this on every path</pre>
+<p>The <code>with</code> statement does exactly this for you. It closes the file automatically at the end of the block, whether it finished normally or raised an error.</p>
+<pre class="code"># The clean way — with does the closing for you
+with open("notes.txt", "w") as f:
+    f.write("hello")
+# f is closed automatically here</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p>Always open files with <code>with</code>. It is shorter, safer, and you can never forget to close the file because Python does it for you.</p></div>
+
+<h2>Use the file only inside the block</h2>
+<pre class="code">with open("notes.txt", "r") as f:
+    content = f.read()
+
+print(content)          # fine — content is a normal string
+# f.read()              # error: the file is already closed out here</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Trying to use the file object after the <code>with</code> block has ended. Once the block finishes, the file is closed, and reading or writing it raises a <code>ValueError</code>. Do all the file work inside the block; keep the data you need in a variable.</p></div>
+
+<h2>Managing more than one thing</h2>
+<p>You can open several resources in one <code>with</code>, which is handy for reading one file and writing another.</p>
+<pre class="code">with open("input.txt", "r") as source, open("output.txt", "w") as target:
+    for line in source:
+        target.write(line.upper())</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Under the surface, any object with the dunder methods <code>__enter__</code> and <code>__exit__</code> can be used with <code>with</code>. Files provide them, which is why <code>open()</code> works this way. You can even add them to your own classes, building on the dunder methods from Module 7.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Write the line <code>Hello from CadetX</code> to a file called <code>notes.txt</code> using a <code>with</code> block in write mode.',
+  c:'with open("notes.txt", "w") as f:\n    f.write("Hello from CadetX\\n")',
+  e:'The with block opens the file for writing and closes it automatically, and <code>\\n</code> adds the newline that write does not.'},
+ {p:'Open <code>notes.txt</code> in read mode and print its entire contents with <code>.read()</code>.',
+  c:'with open("notes.txt", "r") as f:\n    print(f.read())',
+  e:'<code>.read()</code> returns the whole file as one string, and the with block closes the file afterwards.'},
+ {p:'Write the three colours <code>red</code>, <code>green</code> and <code>blue</code> to <code>colours.txt</code>, one per line, using a loop.',
+  c:'lines = ["red", "green", "blue"]\nwith open("colours.txt", "w") as f:\n    for line in lines:\n        f.write(line + "\\n")',
+  e:'Each item is written followed by a newline so the colours land on separate lines.'},
+ {p:'Read <code>colours.txt</code> line by line and print each line with its trailing newline removed.',
+  c:'with open("colours.txt", "r") as f:\n    for line in f:\n        print(line.strip())',
+  e:'Looping over the file yields one line at a time, and <code>.strip()</code> removes the trailing newline.'},
+ {p:'Append the line <code>yellow</code> to the end of <code>colours.txt</code> without wiping what is already there.',
+  c:'with open("colours.txt", "a") as f:\n    f.write("yellow\\n")',
+  e:'Mode <code>"a"</code> adds to the end of the file instead of replacing it like <code>"w"</code> would.'},
+ {p:'Convert the dictionary <code>{"name": "Alex", "score": 88}</code> into a JSON string with <code>json.dumps</code> and print it.',
+  c:'import json\n\nstudent = {"name": "Alex", "score": 88}\ntext = json.dumps(student)\nprint(text)   # {"name": "Alex", "score": 88}',
+  e:'<code>json.dumps</code> converts a Python dictionary into a JSON-formatted string.'},
+ {p:'Given the JSON string <code>{"name": "Alex", "score": 88}</code>, parse it with <code>json.loads</code> and print the value under <code>name</code>.',
+  c:'import json\n\ntext = \'{"name": "Alex", "score": 88}\'\nstudent = json.loads(text)\nprint(student["name"])   # Alex',
+  e:'<code>json.loads</code> parses a JSON string back into a Python dictionary you can index.'},
+ {p:'Write a CSV file <code>scores.csv</code> with a header row <code>name, score</code> and one data row <code>Alex, 88</code> using <code>csv.writer</code>.',
+  c:'import csv\n\nwith open("scores.csv", "w", newline="") as f:\n    writer = csv.writer(f)\n    writer.writerow(["name", "score"])\n    writer.writerow(["Alex", 88])',
+  e:'<code>csv.writer</code> writes each list as a comma-separated row, starting with the header row.'},
+ {p:'Wrap <code>10 / 0</code> in a <code>try</code>/<code>except</code> that catches <code>ZeroDivisionError</code> and prints a friendly message.',
+  c:'try:\n    result = 10 / 0\nexcept ZeroDivisionError:\n    print("Cannot divide by zero")',
+  e:'The risky division is caught by the matching except block, so the program prints a message instead of crashing.'},
+ {p:'Try to convert <code>"abc"</code> to an integer inside a <code>try</code>/<code>except</code> that catches <code>ValueError</code>.',
+  c:'try:\n    number = int("abc")\nexcept ValueError:\n    print("Not a valid number")',
+  e:'Converting non-numeric text raises a ValueError, which the except block handles gracefully.'},
+ {p:'Write a full <code>try</code>/<code>except</code>/<code>else</code>/<code>finally</code> that converts <code>"42"</code> to an int, printing the value in <code>else</code> and a done message in <code>finally</code>.',
+  c:'try:\n    number = int("42")\nexcept ValueError:\n    print("Bad input")\nelse:\n    print(f"Got {number}")\nfinally:\n    print("Done")\n# Got 42\n# Done',
+  e:'<code>else</code> runs because no error occurred, and <code>finally</code> always runs regardless.'},
+ {p:'Given <code>values = ["10", "20", "oops", "5"]</code>, add up the numbers, using <code>try</code>/<code>except</code> to skip any value that is not a number. Print the total.',
+  c:'values = ["10", "20", "oops", "5"]\ntotal = 0\nfor v in values:\n    try:\n        total += int(v)\n    except ValueError:\n        print(f"Skipping {v}")\nprint(total)\n# Skipping oops\n# 35',
+  e:'The try/except inside the loop skips any value that cannot be converted, and the valid numbers add up to 35.'}
+];
+
+const NAV = [
+ {label:"7. Object-Oriented Programming", locked:true, items:[
+   {label:"Classes & Objects"},{label:"The __init__ Method"},{label:"Methods"},{label:"Class Attributes & Dunder Methods"},
+   {type:"tasks", label:"Module 7 Tasks", count:12}
+ ]},
+ {label:"8. Inheritance & OOP", locked:true, items:[
+   {label:"Inheritance"},{label:"Overriding & super()"},{label:"Encapsulation"},{label:"Polymorphism"},
+   {type:"tasks", label:"Module 8 Tasks", count:12}
+ ]},
+ {label:"9. Files & Exceptions", items:[
+   {type:"lesson", i:0, label:"Reading & Writing Files"},
+   {type:"lesson", i:1, label:"CSV & JSON"},
+   {type:"lesson", i:2, label:"Exceptions & try / except"},
+   {type:"lesson", i:3, label:"Context Managers"},
+   {type:"tasks", label:"Module 9 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='9. Files & Exceptions';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='9. Files & Exceptions';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 8: Inheritance & OOP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="/logo.jpg" alt="SSIS Logo" style="height:24px; border-radius:4px; margin-right:8px;" />
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 3 / 4 — Advanced</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Inheritance",
+  starter:'# A child class inherits everything from its parent\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def eat(self):\n        print(f"{self.name} is eating")\n\nclass Dog(Animal):     # Dog is an Animal\n    def bark(self):\n        print(f"{self.name} says Woof!")\n\nrex = Dog("Rex")\nrex.eat()    # inherited from Animal\nrex.bark()   # defined on Dog\n',
+  html:`
+<p>In Module 7 each class stood alone. Real programs often have classes that are variations on a theme — a dog and a cat are both animals. <strong>Inheritance</strong> lets one class build on another, taking all of its data and behaviour for free and adding its own on top. It saves you from writing the same code twice.</p>
+
+<h2>Parent and child classes</h2>
+<p>The class you build on is the <strong>parent</strong> (or base class); the class that builds on it is the <strong>child</strong> (or subclass). You create a child by putting the parent's name in brackets after the child's name.</p>
+<pre class="code">class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def eat(self):
+        print(f"{self.name} is eating")
+
+class Dog(Animal):          # Dog inherits from Animal
+    def bark(self):
+        print(f"{self.name} says Woof!")
+
+rex = Dog("Rex")
+rex.eat()     # Rex is eating   — inherited from Animal
+rex.bark()    # Rex says Woof!  — Dog's own method</pre>
+<p>Notice <code>Dog</code> never defines <code>__init__</code> or <code>eat</code>, yet <code>rex</code> can use both. It received them from <code>Animal</code>. This relationship is often described as "is-a": a dog <em>is an</em> animal.</p>
+<div class="callout note"><span class="lbl">Note</span><p>A child can add brand-new methods (like <code>bark</code>) that the parent knows nothing about. Inheritance flows one way: the child gets everything from the parent, but the parent never gains the child's extras.</p></div>
+
+<h2>Building a family of classes</h2>
+<p>Many children can share one parent, each adding its own behaviour while reusing the common parts.</p>
+<pre class="code">class Animal:
+    def __init__(self, name):
+        self.name = name
+
+class Dog(Animal):
+    def speak(self):
+        print(f"{self.name}: Woof")
+
+class Cat(Animal):
+    def speak(self):
+        print(f"{self.name}: Meow")
+
+Dog("Rex").speak()    # Rex: Woof
+Cat("Bella").speak()  # Bella: Meow</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Do not reach for inheritance just to reuse a bit of code. Use it only when the child genuinely <em>is a kind of</em> the parent. If the relationship is really "has-a" (a car has an engine), store the other object as an attribute instead.</p></div>
+`
+},
+{
+  title:"Overriding & super()",
+  starter:'# A child can replace a parent method, and still call the original\nclass Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def speak(self):\n        print(f"{self.name} makes a sound")\n\nclass Dog(Animal):\n    def speak(self):                 # override the parent version\n        print(f"{self.name} says Woof!")\n\nAnimal("Thing").speak()   # Thing makes a sound\nDog("Rex").speak()        # Rex says Woof!\n',
+  html:`
+<p>A child inherits its parent's methods, but it does not have to keep them as they are. <strong>Overriding</strong> means defining a method in the child with the same name as one in the parent — the child's version then takes over. And <code>super()</code> lets the child still reach the parent's original version when it needs to.</p>
+
+<h2>Overriding a method</h2>
+<p>When a child defines a method that already exists on the parent, Python uses the child's version for child objects. The parent is unchanged for its own objects.</p>
+<pre class="code">class Animal:
+    def speak(self):
+        print("Some generic sound")
+
+class Dog(Animal):
+    def speak(self):                # this replaces Animal.speak for dogs
+        print("Woof!")
+
+Animal().speak()   # Some generic sound
+Dog().speak()      # Woof!</pre>
+
+<h2>Calling the parent with super()</h2>
+<p>Often you do not want to replace the parent's method entirely — you want to <em>extend</em> it. <code>super()</code> gives you access to the parent, so you can run its version and then add more. This is most common in <code>__init__</code>.</p>
+<pre class="code">class Animal:
+    def __init__(self, name):
+        self.name = name
+
+class Dog(Animal):
+    def __init__(self, name, breed):
+        super().__init__(name)      # let Animal set up name
+        self.breed = breed          # then add Dog's own attribute
+
+rex = Dog("Rex", "Labrador")
+print(rex.name)    # Rex     (set by Animal via super)
+print(rex.breed)   # Labrador (set by Dog)</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>If a child defines its own <code>__init__</code> and forgets to call <code>super().__init__(...)</code>, the parent's setup never runs, so attributes like <code>self.name</code> are never created — and reading them later raises an <code>AttributeError</code>.</p></div>
+<div class="callout note"><span class="lbl">Note</span><p>Read <code>super()</code> as "the parent version of this". You can use it with any method, not just <code>__init__</code>, whenever you want to build on what the parent already does rather than throw it away.</p></div>
+`
+},
+{
+  title:"Encapsulation",
+  starter:'# A leading underscore signals "internal, please do not touch"\nclass Account:\n    def __init__(self, balance):\n        self._balance = balance      # meant to be private\n\n    def deposit(self, amount):\n        if amount > 0:\n            self._balance += amount\n\n    def get_balance(self):\n        return self._balance\n\nacc = Account(100)\nacc.deposit(50)\nprint(acc.get_balance())   # 150\n',
+  html:`
+<p><strong>Encapsulation</strong> means keeping an object's data safely inside it and controlling how the outside world touches that data. Instead of letting any code change any attribute directly, you expose methods that guard the rules. It stops objects being put into invalid states.</p>
+
+<h2>The problem with wide-open attributes</h2>
+<p>Every attribute you have made so far is fully public — anyone can set it to anything, including nonsense.</p>
+<pre class="code">class Account:
+    def __init__(self, balance):
+        self.balance = balance
+
+acc = Account(100)
+acc.balance = -9999      # nothing stops this bad value
+print(acc.balance)       # -9999</pre>
+
+<h2>Signalling "internal" with an underscore</h2>
+<p>Python does not have strict private variables like Java. Instead there is a strong convention: a name beginning with a single underscore, like <code>_balance</code>, means "this is internal — do not touch it from outside". It is a polite "keep out" sign that other programmers respect.</p>
+<pre class="code">class Account:
+    def __init__(self, balance):
+        self._balance = balance          # internal by convention
+
+    def deposit(self, amount):
+        if amount &gt; 0:                    # guard the rule
+            self._balance += amount
+
+    def get_balance(self):
+        return self._balance
+
+acc = Account(100)
+acc.deposit(50)
+# acc.deposit(-50)  -> ignored by the guard
+print(acc.get_balance())   # 150</pre>
+<div class="callout note"><span class="lbl">Note</span><p>The single underscore is a convention, not a lock — Python will still let you reach <code>acc._balance</code> if you insist. A double leading underscore (<code>__balance</code>) makes it harder to reach by accident through a mechanism called name mangling, but the everyday tool is the single underscore plus well-designed methods.</p></div>
+
+<h2>Controlling access with properties</h2>
+<p>Sometimes you want an attribute to look normal from outside but run checks when it is read or set. The <code>@property</code> decorator turns a method into something you access like an attribute.</p>
+<pre class="code">class Circle:
+    def __init__(self, radius):
+        self._radius = radius
+
+    @property
+    def radius(self):
+        return self._radius
+
+    @property
+    def area(self):
+        return 3.14159 * self._radius ** 2
+
+c = Circle(5)
+print(c.radius)   # 5    — called like an attribute, no brackets
+print(c.area)     # 78.53975 — computed on the fly</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p>Start simple. Plain attributes are fine for most classes. Reach for underscores and properties when an attribute has rules to enforce or a value that should be computed rather than stored.</p></div>
+`
+},
+{
+  title:"Polymorphism",
+  starter:'# The same method name behaves correctly for each type\nclass Dog:\n    def speak(self):\n        return "Woof"\n\nclass Cat:\n    def speak(self):\n        return "Meow"\n\nfor animal in [Dog(), Cat(), Dog()]:\n    print(animal.speak())   # Woof, Meow, Woof\n',
+  html:`
+<p><strong>Polymorphism</strong> is a long word for a simple, powerful idea: the same method call can do the right thing for different types of object. If several classes each provide a method with the same name, your code can call it without caring which class it is dealing with.</p>
+
+<h2>One call, many behaviours</h2>
+<p>Because both classes below have a <code>speak</code> method, the loop can treat them the same. Each object responds in its own way.</p>
+<pre class="code">class Dog:
+    def speak(self):
+        return "Woof"
+
+class Cat:
+    def speak(self):
+        return "Meow"
+
+class Cow:
+    def speak(self):
+        return "Moo"
+
+for animal in [Dog(), Cat(), Cow()]:
+    print(animal.speak())
+# Woof
+# Meow
+# Moo</pre>
+<p>The loop never checks the type. It simply trusts that each object has a <code>speak</code> method and calls it. Adding a new animal class later needs no change to the loop at all.</p>
+
+<h2>Duck typing</h2>
+<p>Python takes this further with an idea nicknamed <strong>duck typing</strong>: "if it walks like a duck and quacks like a duck, treat it as a duck". Python does not care what class an object is — only whether it has the method you are calling.</p>
+<pre class="code">class Duck:
+    def quack(self):
+        print("Quack")
+
+class Person:
+    def quack(self):
+        print("I am imitating a duck")
+
+def make_it_quack(thing):
+    thing.quack()      # works on anything that has a quack method
+
+make_it_quack(Duck())     # Quack
+make_it_quack(Person())   # I am imitating a duck</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Polymorphism works beautifully with inheritance: give each child its own version of a shared method (like the <code>speak</code> override in the previous lesson), then loop over a mixed list of them and call that method on each.</p></div>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>If you loop over mixed objects and call a method that one of them does not have, you get an <code>AttributeError</code>. Polymorphism relies on every object in the group actually providing the method you call.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Create a parent class <code>Animal</code> with an <code>__init__</code> that stores a <code>name</code> and an <code>eat()</code> method. Create a child class <code>Dog(Animal)</code>, then make a dog and call <code>eat()</code>.',
+  c:'class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def eat(self):\n        print(f"{self.name} is eating")\n\nclass Dog(Animal):\n    pass\n\nd = Dog("Rex")\nd.eat()   # Rex is eating',
+  e:'<code>Dog</code> inherits both <code>__init__</code> and <code>eat</code> from <code>Animal</code>, so the dog can use them without redefining anything.'},
+ {p:'Add a new method <code>bark()</code> to <code>Dog</code> that the parent does not have, then call both the inherited <code>eat()</code> and the new <code>bark()</code>.',
+  c:'class Animal:\n    def __init__(self, name):\n        self.name = name\n\n    def eat(self):\n        print(f"{self.name} is eating")\n\nclass Dog(Animal):\n    def bark(self):\n        print(f"{self.name} says Woof!")\n\nd = Dog("Rex")\nd.eat()    # Rex is eating\nd.bark()   # Rex says Woof!',
+  e:'The child adds its own method while still using the name attribute inherited from the parent.'},
+ {p:'Create <code>Animal</code> and <code>Cat(Animal)</code> where <code>Cat</code> adds a <code>meow()</code> method. Make a cat and call <code>meow()</code>.',
+  c:'class Animal:\n    def __init__(self, name):\n        self.name = name\n\nclass Cat(Animal):\n    def meow(self):\n        print(f"{self.name} says Meow")\n\nc = Cat("Bella")\nc.meow()   # Bella says Meow',
+  e:'The cat reuses the parent initialiser for its name and adds its own behaviour on top.'},
+ {p:'Give <code>Animal</code> a <code>speak()</code> method, then override it in <code>Dog</code> so a dog prints <code>Woof!</code>. Call <code>speak()</code> on both an Animal and a Dog.',
+  c:'class Animal:\n    def speak(self):\n        print("Some sound")\n\nclass Dog(Animal):\n    def speak(self):\n        print("Woof!")\n\nAnimal().speak()   # Some sound\nDog().speak()      # Woof!',
+  e:'The child version of <code>speak</code> replaces the parent version for dog objects, while the parent keeps its own.'},
+ {p:'Create <code>Animal</code> with <code>__init__(self, name)</code>, then <code>Dog(Animal)</code> whose <code>__init__</code> takes <code>name</code> and <code>breed</code> and calls <code>super().__init__(name)</code>. Print both attributes.',
+  c:'class Animal:\n    def __init__(self, name):\n        self.name = name\n\nclass Dog(Animal):\n    def __init__(self, name, breed):\n        super().__init__(name)\n        self.breed = breed\n\nd = Dog("Rex", "Labrador")\nprint(d.name)    # Rex\nprint(d.breed)   # Labrador',
+  e:'<code>super().__init__(name)</code> lets the parent set up the name before the child adds its own breed attribute.'},
+ {p:'Create a class <code>Vehicle</code> with a <code>wheels</code> attribute set to 4, then <code>Motorbike(Vehicle)</code> whose <code>__init__</code> uses <code>super()</code> and then sets <code>self.wheels = 2</code>. Print the wheels.',
+  c:'class Vehicle:\n    def __init__(self):\n        self.wheels = 4\n\nclass Motorbike(Vehicle):\n    def __init__(self):\n        super().__init__()\n        self.wheels = 2\n\nm = Motorbike()\nprint(m.wheels)   # 2',
+  e:'The child first runs the parent setup, then overrides the wheels value for its own needs.'},
+ {p:'Create an <code>Account</code> class storing the balance as <code>_balance</code>, with a <code>deposit(amount)</code> method that only accepts positive amounts and a <code>get_balance()</code> method. Deposit 50 onto a starting 100 and print the balance.',
+  c:'class Account:\n    def __init__(self, balance):\n        self._balance = balance\n\n    def deposit(self, amount):\n        if amount > 0:\n            self._balance += amount\n\n    def get_balance(self):\n        return self._balance\n\nacc = Account(100)\nacc.deposit(50)\nprint(acc.get_balance())   # 150',
+  e:'The underscore marks the balance as internal, and the guard in deposit protects it from invalid amounts.'},
+ {p:'Add a guard so that <code>deposit(-50)</code> is ignored. Deposit 100 then try to deposit -50, and print the final balance to show the bad deposit was refused.',
+  c:'class Account:\n    def __init__(self):\n        self._balance = 0\n\n    def deposit(self, amount):\n        if amount > 0:\n            self._balance += amount\n\n    def get_balance(self):\n        return self._balance\n\nacc = Account()\nacc.deposit(100)\nacc.deposit(-50)\nprint(acc.get_balance())   # 100',
+  e:'The condition inside deposit rejects any non-positive amount, so the negative deposit changes nothing.'},
+ {p:'Create a <code>Circle</code> class with a <code>@property</code> called <code>area</code> that returns <code>3.14159 * radius ** 2</code>. Make a circle of radius 5 and print its area (accessed without brackets).',
+  c:'class Circle:\n    def __init__(self, radius):\n        self._radius = radius\n\n    @property\n    def area(self):\n        return 3.14159 * self._radius ** 2\n\nc = Circle(5)\nprint(c.area)   # 78.53975',
+  e:'The <code>@property</code> lets you read <code>area</code> like an attribute while it is actually computed by a method.'},
+ {p:'Create <code>Dog</code>, <code>Cat</code> and <code>Cow</code> classes that each have a <code>speak()</code> method returning their sound. Loop over a list of one of each and print every sound.',
+  c:'class Dog:\n    def speak(self):\n        return "Woof"\n\nclass Cat:\n    def speak(self):\n        return "Meow"\n\nclass Cow:\n    def speak(self):\n        return "Moo"\n\nfor animal in [Dog(), Cat(), Cow()]:\n    print(animal.speak())\n# Woof\n# Meow\n# Moo',
+  e:'The loop calls <code>speak</code> on each object without checking its type, and each class responds in its own way.'},
+ {p:'Write a function <code>make_it_speak(thing)</code> that calls <code>thing.speak()</code>. Pass it a <code>Dog</code> and a <code>Cat</code> that both have a <code>speak()</code> method to show duck typing in action.',
+  c:'class Dog:\n    def speak(self):\n        print("Woof")\n\nclass Cat:\n    def speak(self):\n        print("Meow")\n\ndef make_it_speak(thing):\n    thing.speak()\n\nmake_it_speak(Dog())   # Woof\nmake_it_speak(Cat())   # Meow',
+  e:'The function works on any object that has a <code>speak</code> method, regardless of its class.'},
+ {p:'Build a small hierarchy: a parent <code>Shape</code> with an <code>area()</code> that returns 0, and children <code>Square(side)</code> and <code>Rectangle(width, height)</code> that override <code>area()</code>. Loop over one of each and print the areas.',
+  c:'class Shape:\n    def area(self):\n        return 0\n\nclass Square(Shape):\n    def __init__(self, side):\n        self.side = side\n\n    def area(self):\n        return self.side * self.side\n\nclass Rectangle(Shape):\n    def __init__(self, width, height):\n        self.width = width\n        self.height = height\n\n    def area(self):\n        return self.width * self.height\n\nfor shape in [Square(4), Rectangle(3, 5)]:\n    print(shape.area())\n# 16\n# 15',
+  e:'Each child overrides <code>area</code> with its own formula, and the loop relies on polymorphism to call the right one for every shape.'}
+];
+
+const NAV = [
+ {label:"7. Object-Oriented Programming", locked:true, items:[
+   {label:"Classes & Objects"},{label:"The __init__ Method"},{label:"Methods"},{label:"Class Attributes & Dunder Methods"},
+   {type:"tasks", label:"Module 7 Tasks", count:12}
+ ]},
+ {label:"8. Inheritance & OOP", items:[
+   {type:"lesson", i:0, label:"Inheritance"},
+   {type:"lesson", i:1, label:"Overriding & super()"},
+   {type:"lesson", i:2, label:"Encapsulation"},
+   {type:"lesson", i:3, label:"Polymorphism"},
+   {type:"tasks", label:"Module 8 Tasks", count:12}
+ ]},
+ {label:"9. Files & Exceptions", locked:true, items:[
+   {label:"Reading & Writing Files"},{label:"CSV & JSON"},{label:"Exceptions & try / except"},{label:"Context Managers"},
+   {type:"tasks", label:"Module 9 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='8. Inheritance & OOP';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='8. Inheritance & OOP';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

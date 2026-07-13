@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 1: Getting Started</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="/logo.jpg" alt="SSIS Logo" style="height:24px; border-radius:4px; margin-right:8px;" />
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 1 / 4 — Foundations</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"What is Python?",
+  starter:'# Your very first Python program\nprint("Hello, World!")\nprint("Welcome to CadetX")\n',
+  html:`
+<p>Python is a <strong>programming language</strong> — a way for you to give instructions to a computer using words and symbols that look almost like plain English. It was created by <strong>Guido van Rossum</strong> in 1991 and named after the British comedy series <em>Monty Python's Flying Circus</em>, not the snake.</p>
+<p>Three words describe Python.</p>
+
+<h3>High-level</h3>
+<p><strong>High-level</strong> means Python takes care of the complicated stuff for you. When you write a Python program, you don't have to think about how the computer's memory works or how to talk to the processor. Python handles all that behind the scenes so you can focus on solving your problem.</p>
+
+<h3>Interpreted</h3>
+<p><strong>Interpreted</strong> means Python runs your code line by line, immediately. In a <em>compiled</em> language like C or Java, you first run a separate tool that translates your whole program into machine code before it can run at all. In Python there is no such step — you type your code and run it.</p>
+<table>
+<tr><th></th><th>Compiled (C, Java)</th><th>Interpreted (Python)</th></tr>
+<tr><td>When translation happens</td><td>All at once, before running</td><td>While running, as needed</td></tr>
+<tr><td>Separate build step</td><td>Yes</td><td>No</td></tr>
+<tr><td>Speed to test a change</td><td>Slower (rebuild each time)</td><td>Faster (just run it)</td></tr>
+<tr><td>Raw runtime speed</td><td>Usually faster</td><td>Usually slower</td></tr>
+</table>
+<div class="callout note"><span class="lbl">Note</span><p>You may read that "Python compiles to bytecode." That is true — behind the scenes Python quietly turns your code into a compact intermediate form before running it. You never manage this yourself, so as a beginner you can safely think of Python as "read and run".</p></div>
+
+<h3>General-purpose</h3>
+<p><strong>General-purpose</strong> means Python is not designed for just one thing. The same language is used to build websites, analyse data, train AI models, automate repetitive tasks, and write games.</p>
+
+<h2>Two ways to run Python</h2>
+<p>There are two settings in which Python code runs, and beginners often confuse them.</p>
+<p>The first is the <strong>REPL</strong> (Read–Eval–Print Loop), also called the interactive shell. You type one line, press Enter, and get an answer straight away. It is brilliant for trying things out.</p>
+<pre class="code">2 + 2        # In the REPL this shows 4 straight away
+"hello"      # Shows 'hello'</pre>
+<p>The second is a <strong>script</strong> — a file ending in <code>.py</code> that holds many lines and runs from top to bottom in one go.</p>
+<pre class="code">print("This runs first")
+print("This runs second")
+print("This runs third")</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>In the REPL, typing <code>2 + 2</code> shows <code>4</code> on its own. In a script file, typing <code>2 + 2</code> shows <strong>nothing</strong> — the file calculates it and silently throws the answer away. In a file you must use <code>print(2 + 2)</code> to actually see it. This trips up almost everyone at first.</p></div>
+
+<h2>Your first program: print()</h2>
+<p>Almost every first program simply displays a message. In Python that is the job of <code>print()</code>. It writes text to the <strong>console</strong> — the place where your program's text appears. The text goes inside the round brackets, and if it is words it must be wrapped in quotes.</p>
+<pre class="code">print("Hello, World!")       # Hello, World!
+print("Welcome to CadetX")   # Welcome to CadetX</pre>
+<p>The quotes are how Python tells the difference between <em>text</em> and <em>instructions</em>. <code>print("name")</code> displays the four letters <code>name</code>. Without quotes, <code>print(name)</code> tells Python "go and find a thing called name and print its value" — and since no such thing exists, you get an error.</p>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Forgetting the quotes. <code>print(Hello)</code> fails with a <code>NameError</code> because Python thinks <code>Hello</code> is the name of some value it should look up. Text always needs quotes.</p></div>
+
+<h2>Python 2 vs Python 3</h2>
+<p>There were two major versions of Python, and they are not fully compatible. Python 2 is now retired. <strong>Always use Python 3.</strong> If you ever find an old tutorial where <code>print</code> is written without brackets (<code>print "hello"</code>), that is Python 2 — ignore it.</p>
+`
+},
+{
+  title:"Python Syntax & Indentation",
+  starter:'# Indentation groups lines into a block\nif 5 > 3:\n    print("Five is greater than three")\n    print("Both of these lines are inside the if")\nprint("This line is outside the if")\n',
+  html:`
+<p>Every language has <strong>syntax</strong>: the rules for how code must be written so the interpreter understands it. Python's syntax is famously clean, and the reason is one bold design choice — <strong>indentation is part of the language</strong>.</p>
+
+<h2>Indentation defines blocks</h2>
+<p>In most languages you group lines together with curly braces <code>{ }</code>, and the indentation is only for looks. In Python there are no braces. Instead, the <strong>amount of leading space</strong> on each line is what groups code into blocks. Lines indented to the same level belong together.</p>
+<pre class="code">if 5 &gt; 3:
+    print("Five is greater")   # indented — belongs to the if
+    print("So this prints too")
+print("This always runs")      # not indented — outside the if block</pre>
+<p>You meet <code>if</code> properly in Module 3 — for now just watch the indentation. The two indented lines belong to the <code>if</code>; the last line, flush to the left, does not. Python made this choice on purpose: because the layout <em>is</em> the structure, badly laid-out Python simply will not run, which keeps code readable.</p>
+
+<h2>The rules of indentation</h2>
+<p>The standard, set out in Python's official style guide (PEP 8), is <strong>four spaces per level</strong>.</p>
+<table>
+<tr><th>Rule</th><th>Why</th></tr>
+<tr><td>Use spaces, not tabs</td><td>Tabs can display at different widths, breaking alignment</td></tr>
+<tr><td>Use 4 spaces per level</td><td>The agreed convention across the Python world</td></tr>
+<tr><td>Never mix tabs and spaces</td><td>Python 3 raises a <code>TabError</code> if you do</td></tr>
+<tr><td>Be consistent in a block</td><td>Lines in the same block must share the same indentation</td></tr>
+</table>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Mixing tabs and spaces. It often <em>looks</em> identical on screen, but Python 3 will refuse to run it with a <code>TabError</code>. Set your editor to insert spaces when you press Tab and this problem disappears for good.</p></div>
+
+<h2>Lines, statements and semicolons</h2>
+<p>A line of code (a <strong>statement</strong>) usually ends simply when the line ends. There is no <code>;</code> at the end like in Java or C.</p>
+<pre class="code">course = "Python"
+duration = 12</pre>
+<p>You <em>can</em> put two statements on one line with a semicolon, but it is poor style — avoid it.</p>
+<pre class="code">course = "Python"; duration = 12   # legal, but don't do this</pre>
+<p>If a single statement is very long, the clean way to spread it across lines is to use brackets, inside which Python ignores line breaks.</p>
+<pre class="code">total = (
+    100
+    + 200
+    + 300
+)   # Python treats this as one statement because of the ( )</pre>
+
+<h2>Spacing the output: sep and end</h2>
+<p><code>print()</code> has two hidden settings: <code>sep</code> (what goes <em>between</em> items) and <code>end</code> (what goes <em>after</em> everything). By default <code>sep</code> is a single space and <code>end</code> is a newline.</p>
+<pre class="code">print("2026", "06", "23", sep="-")   # 2026-06-23
+print("Loading", end="...")
+print("done")                         # Loading...done</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p><code>sep</code> and <code>end</code> are your first taste of <em>keyword arguments</em> — settings you pass by name. The pattern <code>name=value</code> inside brackets means "set this option".</p></div>
+
+<h2>Python is case-sensitive</h2>
+<p><code>Course</code>, <code>course</code> and <code>COURSE</code> are three different things to Python. This catches beginners constantly.</p>
+<pre class="code">city = "Newcastle"
+print(City)   # NameError: 'City' is not defined — capital C is a different name</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Compared with Java or C, the headline difference is the missing braces and missing semicolons. Where those languages say "use <code>{ }</code> to group and <code>;</code> to end", Python says "use indentation to group and a line break to end". Once that clicks, Python reads almost like an outline.</p></div>
+`
+},
+{
+  title:"Comments",
+  starter:'# This program prints a greeting\nprint("Hello from CadetX")   # this is an inline comment\n\n# The next line is "commented out" so it will not run\n# print("You will not see me")\n',
+  html:`
+<p>A <strong>comment</strong> is a note in your code written for humans. The interpreter ignores it completely. Comments exist because code is read far more often than it is written — by your future self, by teammates, by a marker — and a good comment saves everyone time.</p>
+
+<h2>Writing a comment</h2>
+<p>In Python, anything after a <code>#</code> symbol on a line is a comment.</p>
+<pre class="code">number = 10   # this part is a comment; the line still runs
+print(number)</pre>
+<p>A comment can sit on its own line or at the end of a line of code (an <em>inline</em> comment).</p>
+
+<h2>Python has no real multi-line comment</h2>
+<p>This surprises people coming from C or Java, which have <code>/* ... */</code>. Python does <strong>not</strong> have a dedicated multi-line comment. To comment several lines, put <code>#</code> on each one.</p>
+<pre class="code"># This program greets the user.
+# It was written as a first example.
+# Each line needs its own hash symbol.
+print("Hello")</pre>
+<p>You may see people use triple-quoted text like <code>"""..."""</code> across several lines and call it a comment. Strictly, <strong>that is not a comment — it is a string</strong> (a piece of text) that Python creates and then ignores because nothing uses it. It usually works, but it is not the proper tool.</p>
+<p>The one place triple-quoted text <em>is</em> right is a <strong>docstring</strong>: a description placed as the very first line inside a function. You will use these properly in Module 4.</p>
+<pre class="code">def greet():
+    """Print a friendly greeting."""   # this is a docstring, not a comment
+    print("Hello")</pre>
+
+<h2>How to comment well</h2>
+<p>The goal is not to label every line. It is to explain <em>why</em> something is done when it is not obvious.</p>
+<pre class="code"># BAD — states the obvious, adds no value
+total = price + tax   # add price and tax
+
+# GOOD — explains the reasoning
+total = price + tax   # tax must be included before the discount applies</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p>Good comments explain <em>why</em>, not <em>what</em>. The code already shows what it does. Save your words for the reasoning a reader could not guess.</p></div>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Leaving large blocks of old code "commented out just in case". This clutters files and confuses readers. Delete dead code — you can always recover it from version history, which you learn in the Git module.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Print the message <code>Hello, World!</code> to the console.',
+  c:'print("Hello, World!")',
+  e:'<code>print()</code> writes the text inside the quotes to the console; the quotes mark it as text rather than an instruction.'},
+ {p:'Print the name <code>CadetX</code> and the number <code>2026</code> on two separate lines, using two <code>print()</code> calls.',
+  c:'print("CadetX")\nprint(2026)',
+  e:'Each <code>print()</code> ends with a newline by default, so the second call automatically starts on a fresh line.'},
+ {p:'Using a single <code>print()</code>, display <code>My score is 95 out of 100</code> by passing the words and numbers as separate comma-separated items.',
+  c:'print("My score is", 95, "out of", 100)',
+  e:'When given several items separated by commas, <code>print()</code> joins them with a single space, so you do not add the spaces yourself.'},
+ {p:'Print the values <code>2026</code>, <code>06</code> and <code>23</code> joined by hyphens so the output reads <code>2026-06-23</code>. Use the <code>sep</code> setting.',
+  c:'print("2026", "06", "23", sep="-")',
+  e:'The <code>sep</code> keyword argument replaces the default space that <code>print()</code> puts between items, here with a hyphen.'},
+ {p:'Print <code>Loading</code> followed immediately by <code>done</code> on the same line, using the <code>end</code> setting on the first <code>print()</code>.',
+  c:'print("Loading", end=" ")\nprint("done")   # Loading done',
+  e:'Changing <code>end</code> from its default newline to a space stops the first <code>print()</code> moving to a new line, so the second one continues alongside it.'},
+ {p:'Write a program that prints <code>Welcome to CadetX</code> and also contains a comment explaining what the line does.',
+  c:'# Display a welcome message to the user\nprint("Welcome to CadetX")',
+  e:'Everything after <code>#</code> is ignored by Python, so the comment is for human readers only while the <code>print()</code> still runs.'},
+ {p:'The code below will not run because the first line is wrongly indented. Fix it so it prints <code>Inside</code> then <code>Outside</code>.<br><span style="font-family:monospace;font-size:12.5px;color:#9fc0ff">&nbsp;&nbsp;&nbsp;&nbsp;print("Inside")<br>print("Outside")</span>',
+  c:'print("Inside")\nprint("Outside")',
+  e:'Python only allows indentation where a block is expected (like inside an <code>if</code>); here both lines are top-level, so neither may have leading spaces.'},
+ {p:'Print the word <code>Top</code>, then a completely blank line, then the word <code>Bottom</code>.',
+  c:'print("Top")\nprint()          # an empty print() outputs just a blank line\nprint("Bottom")',
+  e:'Calling <code>print()</code> with nothing inside outputs only its default newline, which appears as an empty line.'},
+ {p:'Using a single <code>print()</code> and the special sequence <code>\\n</code>, output <code>Line one</code> and <code>Line two</code> on two separate lines.',
+  c:'print("Line one\\nLine two")\n# Line one\n# Line two',
+  e:'Inside a string, <code>\\n</code> is a newline character, so Python breaks the line at that point even though it is one <code>print()</code> call.'},
+ {p:'Print the sentence <code>She said "hello" to me</code>, keeping the double quotes around <em>hello</em> in the output.',
+  c:'print(\'She said "hello" to me\')',
+  e:'Wrapping the whole string in single quotes lets the double quotes appear literally inside it; the alternative is to escape them as <code>\\"</code>.'},
+ {p:'Using one <code>print()</code>, display <code>red</code>, <code>green</code> and <code>blue</code> separated by a comma-and-space and end the line with an exclamation mark instead of a newline. Use both <code>sep</code> and <code>end</code>.',
+  c:'print("red", "green", "blue", sep=", ", end="!")\n# red, green, blue!',
+  e:'<code>sep=", "</code> sets what goes between the items and <code>end="!"</code> replaces the trailing newline, so both settings work together on the same call.'},
+ {p:'Write a short "about this course" program of at least three <code>print()</code> lines (a course name, a provider and a goal). Begin with a comment describing what it does, and add one inline comment.',
+  c:'# A short program that prints basic details about the course\nprint("Course: Python")\nprint("Provider: CadetX")     # the platform delivering this course\nprint("Goal: Learn to code")',
+  e:'The opening <code>#</code> line documents the purpose of the program and the inline comment annotates a single line, while each <code>print()</code> outputs one detail on its own line.'}
+];
+
+/* sidebar structure — Module 1 is live; Modules 2 & 3 mirror the reference and are locked */
+const NAV = [
+ {label:"1. Getting Started", items:[
+   {type:"lesson", i:0, label:"What is Python?"},
+   {type:"lesson", i:1, label:"Python Syntax & Indentation"},
+   {type:"lesson", i:2, label:"Comments"},
+   {type:"tasks", label:"Module 1 Tasks", count:12}
+ ]},
+ {label:"2. Variables & Data Types", locked:true, items:[
+   {label:"Variables"},{label:"Numbers"},{label:"Strings"},{label:"Booleans & Type Conversion"},
+   {type:"tasks", label:"Module 2 Tasks", count:12}
+ ]},
+ {label:"3. Operators", locked:true, items:[
+   {label:"Arithmetic & Assignment"},{label:"Comparison Operators"},{label:"Logical & Membership"},{label:"Bitwise Operators"},
+   {type:"tasks", label:"Module 3 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? 3 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='1. Getting Started';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='1. Getting Started';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

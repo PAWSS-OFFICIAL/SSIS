@@ -56,8 +56,28 @@ export const PyLearnDashboardPage = () => {
   const isCertUnlocked = earnedStars >= 12;
 
   return (
-    <DashboardLayout role="Student">
-      <div className="max-w-5xl mx-auto space-y-8 pb-12">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
+      {/* Custom Full-Width Header */}
+      <div className="bg-[#1a365d] text-white px-6 py-4 flex items-center justify-between shadow-md">
+        <div className="flex items-center gap-4">
+          <div className="bg-white p-1 rounded">
+            <img src="/logo.jpg" alt="SSIS Logo" className="w-8 h-8 rounded-sm object-contain" />
+          </div>
+          <div className="flex flex-col">
+            <span className="font-bold text-lg leading-tight tracking-tight">SSIS PyLearn</span>
+            <span className="text-xs text-blue-200 font-medium">Complete Python Guide</span>
+          </div>
+        </div>
+        <button 
+          onClick={() => navigate('/dashboard')}
+          className="bg-white/10 hover:bg-white/20 text-white text-sm font-semibold px-4 py-2 rounded-lg transition"
+        >
+          &larr; Back to LMS
+        </button>
+      </div>
+
+      <div className="flex-1 overflow-y-auto">
+        <div className="max-w-5xl mx-auto space-y-8 pb-12 pt-8 px-4">
         {/* HERO SECTION */}
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8 flex flex-col md:flex-row items-center justify-between gap-8">
           <div>
@@ -196,6 +216,7 @@ export const PyLearnDashboardPage = () => {
           </div>
         </div>
       </div>
-    </DashboardLayout>
+    </div>
+    </div>
   );
 };

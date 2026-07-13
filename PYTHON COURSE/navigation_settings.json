@@ -1,0 +1,9 @@
+{
+  "employers": true,
+  "students": true,
+  "universities": true,
+  "internships": true,
+  "cxlearn": true,
+  "aboutus": true,
+  "contact": true
+}

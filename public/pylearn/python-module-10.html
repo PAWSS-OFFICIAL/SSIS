@@ -1,0 +1,773 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 10: Modules & Standard Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="/logo.jpg" alt="SSIS Logo" style="height:24px; border-radius:4px; margin-right:8px;" />
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 4 / 4 — Mastery</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Importing Modules",
+  starter:'# A module is a file of ready-made code you can import\nimport math\n\nprint(math.sqrt(16))   # 4.0\nprint(math.pi)         # 3.141592653589793\n\n# import just the parts you need\nfrom random import randint\nprint(randint(1, 6))   # a dice roll between 1 and 6\n',
+  html:`
+<p>You do not have to write everything from scratch. A <strong>module</strong> is a file of ready-made Python code — functions, classes and values — that someone else has already written. <strong>Importing</strong> a module makes all of that available in your own program. Python ships with hundreds of them.</p>
+
+<h2>Importing a whole module</h2>
+<p>The simplest form is <code>import name</code>. After that, you reach the module's contents through the module name and a dot.</p>
+<pre class="code">import math
+
+print(math.sqrt(25))   # 5.0
+print(math.pi)         # 3.141592653589793</pre>
+<p>The dot means "look inside this module". <code>math.sqrt</code> reads as "the sqrt function that lives in math". This keeps names tidy: your own <code>pi</code> and the module's <code>math.pi</code> never clash.</p>
+
+<h2>Importing specific names</h2>
+<p>If you only need one or two things, <code>from module import name</code> brings just those in, so you can use them without the module prefix.</p>
+<pre class="code">from math import sqrt, pi
+
+print(sqrt(25))   # 5.0  — no "math." needed now
+print(pi)         # 3.141592653589793</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Avoid <code>from math import *</code>, which pulls in <em>everything</em>. It can quietly overwrite your own variables with names you did not expect, making bugs hard to trace. Import only what you need, by name.</p></div>
+
+<h2>Renaming with as</h2>
+<p><code>as</code> gives an import a shorter alias. This is a convention for some popular libraries, and handy when a name is long.</p>
+<pre class="code">import math as m
+
+print(m.floor(3.7))   # 3
+print(m.ceil(3.2))    # 4</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Python runs a module's code the first time it is imported, then remembers it. Importing the same module again in the same program does not run it a second time — it reuses what is already loaded.</p></div>
+`
+},
+{
+  title:"The Standard Library",
+  starter:'import random\nimport datetime\n\n# random: pick numbers and choices\nprint(random.randint(1, 100))\nprint(random.choice(["red", "green", "blue"]))\n\n# datetime: work with dates and times\ntoday = datetime.date.today()\nprint(today)\n',
+  html:`
+<p>Everything that comes built into Python is called the <strong>standard library</strong> — the "batteries included" set of modules you can import without installing anything. Here are three you will reach for constantly.</p>
+
+<h2>math: numbers beyond the basics</h2>
+<p>The <code>math</code> module adds functions and constants that the plain operators do not cover.</p>
+<pre class="code">import math
+
+print(math.sqrt(81))    # 9.0   (square root)
+print(math.floor(4.7))  # 4     (round down)
+print(math.ceil(4.2))   # 5     (round up)
+print(math.pi)          # 3.141592653589793
+print(math.pow(2, 10))  # 1024.0</pre>
+
+<h2>random: choosing and shuffling</h2>
+<p>The <code>random</code> module produces random numbers and makes random choices — the basis of games, sampling and simulations.</p>
+<table>
+<tr><th>Function</th><th>What it does</th></tr>
+<tr><td><code>random.randint(a, b)</code></td><td>whole number from a to b, both included</td></tr>
+<tr><td><code>random.random()</code></td><td>a float between 0.0 and 1.0</td></tr>
+<tr><td><code>random.choice(seq)</code></td><td>one random item from a sequence</td></tr>
+<tr><td><code>random.shuffle(list)</code></td><td>reorder a list in place</td></tr>
+</table>
+<pre class="code">import random
+
+print(random.randint(1, 6))                 # a dice roll
+print(random.choice(["heads", "tails"]))    # a coin flip
+
+deck = [1, 2, 3, 4, 5]
+random.shuffle(deck)
+print(deck)                                 # e.g. [3, 1, 5, 2, 4]</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p><code>randint(1, 6)</code> <strong>includes</strong> both ends, so it can return 1, 2, 3, 4, 5 or 6. This is different from <code>range</code>, which excludes the stop. Do not assume they behave the same.</p></div>
+
+<h2>datetime: dates and times</h2>
+<p>The <code>datetime</code> module represents dates and times as objects you can compare and do arithmetic with.</p>
+<pre class="code">import datetime
+
+today = datetime.date.today()
+print(today)          # e.g. 2026-07-01
+print(today.year)     # 2026
+
+birthday = datetime.date(2000, 5, 20)
+age_days = today - birthday      # subtracting dates gives a duration
+print(age_days.days)             # the number of days between them</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Subtracting one date from another gives a <code>timedelta</code> — an object representing a span of time. Reading its <code>.days</code> attribute is how you turn that span into a plain number of days.</p></div>
+`
+},
+{
+  title:"Writing Your Own Modules",
+  starter:'# Any .py file is a module you can import.\n# Suppose a file called helpers.py contains:\n#\n#     def greet(name):\n#         return f"Hello, {name}"\n#\n#     PI = 3.14159\n#\n# Another file can then use it:\n#\n#     import helpers\n#     print(helpers.greet("Alex"))   # Hello, Alex\n#     print(helpers.PI)              # 3.14159\n\nprint("A module is just a .py file you import")\n',
+  html:`
+<p>Modules are not magic — <strong>every Python file is a module</strong>. When your program grows past a single file, you split related code into your own <code>.py</code> files and import them, exactly as you import <code>math</code>. This keeps each file focused and reusable.</p>
+
+<h2>Making a module</h2>
+<p>Say you write a file named <code>helpers.py</code> containing some functions and values.</p>
+<pre class="code"># helpers.py
+def greet(name):
+    return f"Hello, {name}"
+
+def add(a, b):
+    return a + b
+
+PI = 3.14159</pre>
+<p>From another file <em>in the same folder</em>, you import it by its file name without the <code>.py</code>, then use its contents with a dot.</p>
+<pre class="code"># main.py
+import helpers
+
+print(helpers.greet("Alex"))   # Hello, Alex
+print(helpers.add(2, 3))       # 5
+print(helpers.PI)              # 3.14159</pre>
+<div class="callout note"><span class="lbl">Note</span><p>The import name is the file name. A file called <code>student_tools.py</code> is imported as <code>import student_tools</code>. Keep module file names short, lowercase, and free of spaces or hyphens.</p></div>
+
+<h2>Guarding code with __name__</h2>
+<p>When Python imports a file, it <strong>runs</strong> the whole file. That is a problem if your module has test lines at the bottom — they would run on every import. The fix is a special check using the built-in <code>__name__</code>.</p>
+<pre class="code"># helpers.py
+def greet(name):
+    return f"Hello, {name}"
+
+if __name__ == "__main__":
+    # this block runs ONLY when helpers.py is run directly,
+    # never when it is imported by another file
+    print(greet("test"))</pre>
+<div class="callout note"><span class="lbl">Note</span><p>When a file is run directly, Python sets its <code>__name__</code> to <code>"__main__"</code>. When the same file is imported, <code>__name__</code> is the module's name instead. The <code>if __name__ == "__main__":</code> block is how you keep quick tests out of the way of imports.</p></div>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Putting loose <code>print</code> or input lines at the top level of a module. They run every time the module is imported, producing surprise output. Wrap anything that should only run on direct execution in the <code>__name__</code> guard.</p></div>
+`
+},
+{
+  title:"Packages & pip",
+  starter:'# The standard library is built in. Everything else is installed with pip.\n#\n# In a terminal (not inside Python):\n#     pip install requests\n#\n# Then in your code:\n#     import requests\n#     response = requests.get("https://example.com")\n#     print(response.status_code)\n\nprint("pip installs third-party packages from PyPI")\n',
+  html:`
+<p>The standard library covers a lot, but not everything. A <strong>package</strong> is a bundle of modules that someone has published for others to use. The tool that downloads and installs them is <strong>pip</strong>, and the giant public store it fetches from is called <strong>PyPI</strong>, the Python Package Index.</p>
+
+<h2>What a package is</h2>
+<p>A single module is one file. A <strong>package</strong> is a folder of modules grouped together under one name, so you can install a whole toolkit at once. From your side, using one looks just like using any module: you <code>import</code> it.</p>
+
+<h2>Installing with pip</h2>
+<p>You run <code>pip</code> in your computer's terminal or command prompt — <strong>not</strong> inside the Python program itself. Each command installs a package from PyPI.</p>
+<pre class="code"># run these in a terminal, not in Python
+pip install requests      # install a package
+pip install pandas        # install another
+pip list                  # see what is installed
+pip uninstall requests    # remove one</pre>
+<p>Once installed, the package is available to import in your code like anything else.</p>
+<pre class="code">import requests   # this only works after: pip install requests
+
+response = requests.get("https://example.com")
+print(response.status_code)   # 200 if the request succeeded</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Typing <code>pip install ...</code> <em>inside</em> the Python prompt gives a <code>SyntaxError</code>. Pip commands belong in the operating system's terminal. Inside Python, you only ever <code>import</code> the package after it has been installed.</p></div>
+
+<h2>Standard library or package?</h2>
+<table>
+<tr><th>Standard library</th><th>Third-party package</th></tr>
+<tr><td>built into Python</td><td>published by others on PyPI</td></tr>
+<tr><td>no installation needed</td><td>installed with <code>pip install</code></td></tr>
+<tr><td><code>math</code>, <code>random</code>, <code>json</code>, <code>datetime</code></td><td><code>requests</code>, <code>pandas</code>, <code>numpy</code></td></tr>
+</table>
+<div class="callout tip"><span class="lbl">Tip</span><p>Before installing a package for a task, check the standard library first — the job may already be covered by a built-in module, with nothing to install and nothing to keep up to date.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Import the <code>math</code> module and print the square root of 144 using <code>math.sqrt</code>.',
+  c:'import math\nprint(math.sqrt(144))   # 12.0',
+  e:'Importing <code>math</code> gives access to its functions through the module name and a dot.'},
+ {p:'Import only <code>pi</code> from <code>math</code> using <code>from math import pi</code>, then print it without the module prefix.',
+  c:'from math import pi\nprint(pi)   # 3.141592653589793',
+  e:'<code>from ... import</code> brings a single name in so you can use it directly without writing <code>math.</code> first.'},
+ {p:'Import <code>math</code> as <code>m</code> and use it to print the ceiling of 4.2 with <code>m.ceil</code>.',
+  c:'import math as m\nprint(m.ceil(4.2))   # 5',
+  e:'<code>as</code> gives the module a shorter alias, which is then used in place of the full name.'},
+ {p:'Import <code>random</code> and print a random whole number between 1 and 6 to simulate a dice roll.',
+  c:'import random\nprint(random.randint(1, 6))',
+  e:'<code>random.randint(1, 6)</code> returns a whole number from 1 to 6, with both ends included.'},
+ {p:'Use <code>random.choice</code> to print a random item from the list <code>["red", "green", "blue"]</code>.',
+  c:'import random\nprint(random.choice(["red", "green", "blue"]))',
+  e:'<code>random.choice</code> picks one item at random from the sequence you give it.'},
+ {p:'Import <code>random</code>, create a list <code>[1, 2, 3, 4, 5]</code>, shuffle it in place with <code>random.shuffle</code>, and print it.',
+  c:'import random\ndeck = [1, 2, 3, 4, 5]\nrandom.shuffle(deck)\nprint(deck)',
+  e:'<code>random.shuffle</code> reorders the list in place, so the same list now appears in a random order.'},
+ {p:'Import <code>datetime</code> and print today\\u2019s date using <code>datetime.date.today()</code>.',
+  c:'import datetime\ntoday = datetime.date.today()\nprint(today)',
+  e:'<code>datetime.date.today()</code> returns a date object for the current day, which prints in year-month-day form.'},
+ {p:'Create two dates with <code>datetime.date(year, month, day)</code>, subtract one from the other, and print the number of days between them.',
+  c:'import datetime\nstart = datetime.date(2026, 1, 1)\nend = datetime.date(2026, 7, 1)\ngap = end - start\nprint(gap.days)   # 181',
+  e:'Subtracting two dates gives a timedelta, whose <code>.days</code> attribute is the number of days between them.'},
+ {p:'Import <code>math</code> and print both <code>math.floor(7.8)</code> and <code>math.pow(2, 5)</code>.',
+  c:'import math\nprint(math.floor(7.8))   # 7\nprint(math.pow(2, 5))    # 32.0',
+  e:'<code>floor</code> rounds down to the nearest whole number, and <code>pow</code> raises the first number to the power of the second.'},
+ {p:'Describe in a comment what <code>if __name__ == "__main__":</code> is for, then put a <code>print</code> inside such a block so it runs when the file is run directly.',
+  c:'def greet(name):\n    return f"Hello, {name}"\n\nif __name__ == "__main__":\n    # runs only when this file is run directly, not when imported\n    print(greet("Alex"))   # Hello, Alex',
+  e:'The guard lets a file act as both an importable module and a runnable script, keeping test code out of imports.'},
+ {p:'Write, as a comment, the terminal command that installs the third-party package <code>requests</code> with pip, then show the line that would import it in code.',
+  c:'# In a terminal, not inside Python:\n#     pip install requests\n\nimport requests   # available only after installing it\nprint("requests is ready to use")',
+  e:'Packages are installed from the terminal with <code>pip install</code>, then imported in code like any other module.'},
+ {p:'Simulate rolling two dice: import <code>random</code>, roll two numbers between 1 and 6, and print each roll and their total.',
+  c:'import random\ndie1 = random.randint(1, 6)\ndie2 = random.randint(1, 6)\nprint(f"Rolled {die1} and {die2}, total {die1 + die2}")',
+  e:'Two independent calls to <code>randint</code> give two dice, and their sum is the combined total for the turn.'}
+];
+
+const NAV = [
+ {label:"10. Modules & Standard Library", items:[
+   {type:"lesson", i:0, label:"Importing Modules"},
+   {type:"lesson", i:1, label:"The Standard Library"},
+   {type:"lesson", i:2, label:"Writing Your Own Modules"},
+   {type:"lesson", i:3, label:"Packages & pip"},
+   {type:"tasks", label:"Module 10 Tasks", count:12}
+ ]},
+ {label:"11. Advanced Python", locked:true, items:[
+   {label:"Comprehensions in Depth"},{label:"Iterators & Generators"},{label:"Decorators"},{label:"Type Hints"},
+   {type:"tasks", label:"Module 11 Tasks", count:12}
+ ]},
+ {label:"12. Projects", locked:true, items:[
+   {label:"Number Guessing Game"},{label:"To-Do List App"},{label:"Data Summariser"},{label:"Putting It Together"},
+   {type:"tasks", label:"Module 12 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='10. Modules & Standard Library';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='10. Modules & Standard Library';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

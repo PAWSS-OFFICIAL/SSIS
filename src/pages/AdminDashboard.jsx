@@ -60,6 +60,19 @@ export const AdminDashboard = () => {
   const [showLinkParent, setShowLinkParent] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
 
+  useEffect(() => {
+    if (showAddUser && newUser.role === "Student") {
+      const studentCount = users.filter(u => u.role === "Student").length;
+      const currentYear = new Date().getFullYear();
+      const nextRoll = `SSIS${currentYear}${studentCount + 1}`;
+      setNewUser(prev => ({
+        ...prev,
+        idno: prev.idno || nextRoll,
+        password: prev.password === "123456789" ? nextRoll : prev.password
+      }));
+    }
+  }, [showAddUser, newUser.role, users]);
+
   // New user form
   const [newUser, setNewUser] = useState({
     username: "",
@@ -416,7 +429,14 @@ export const AdminDashboard = () => {
                           <Label>Full Name <span className="text-red-500">*</span></Label>
                           <Input
                             value={newUser.name}
-                            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                            onChange={(e) => {
+                              const newName = e.target.value;
+                              setNewUser({ 
+                                ...newUser, 
+                                name: newName,
+                                username: newUser.role === "Student" ? newName.toLowerCase().replace(/\s+/g, '') : newUser.username
+                              });
+                            }}
                             placeholder="John Doe"
                             required
                           />

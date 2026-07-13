@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 3: Operators</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="logo-pill"><span class="logo-cadet">Cadet</span><span class="logo-x">X</span></div>
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 1 / 4 — Foundations</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Arithmetic & Assignment",
+  starter:'# Precedence decides the order of operations\nprint(2 + 3 * 4)      # 14, not 20\nprint((2 + 3) * 4)    # 20\n\n# Augmented assignment updates a variable in place\nscore = 10\nscore += 5\nprint(score)          # 15\n',
+  html:`
+<p>You met the arithmetic operators in Module 2. This lesson is about two things that decide how expressions really behave: the <strong>order</strong> operators run in, and the <strong>assignment operators</strong> that update a variable from its own value.</p>
+
+<h2>Operator precedence: the order of operations</h2>
+<p>When several operators appear in one expression, Python does not simply work left to right. It follows <strong>precedence</strong> rules — the same ones you learned in maths as BODMAS or PEMDAS. Multiplication and division happen before addition and subtraction; powers happen first of all.</p>
+<pre class="code">print(2 + 3 * 4)     # 14  (3*4 first, then + 2)
+print(2 ** 3 * 2)    # 16  (2**3 first, then * 2)
+print(10 - 4 - 2)    # 4   (same level runs left to right)</pre>
+<table>
+<tr><th>Precedence (high → low)</th><th>Operators</th></tr>
+<tr><td>Highest</td><td><code>**</code> (power)</td></tr>
+<tr><td>&nbsp;</td><td><code>-x</code> (negative sign)</td></tr>
+<tr><td>&nbsp;</td><td><code>*</code> &nbsp; <code>/</code> &nbsp; <code>//</code> &nbsp; <code>%</code></td></tr>
+<tr><td>Lowest</td><td><code>+</code> &nbsp; <code>-</code></td></tr>
+</table>
+<div class="callout tip"><span class="lbl">Tip</span><p>You do not have to memorise the table. When in doubt, add brackets. <code>(2 + 3) * 4</code> is clearer than trusting the reader to recall the rules, and brackets never cost anything.</p></div>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Power is even higher than the negative sign, so <code>-3 ** 2</code> is <code>-9</code>, not <code>9</code> — Python reads it as <code>-(3 ** 2)</code>. Write <code>(-3) ** 2</code> if you really want <code>9</code>.</p></div>
+
+<h2>Assignment operators</h2>
+<p>The plain <code>=</code> puts a value into a name. Python also has <strong>augmented assignment</strong> operators that update a name from its current value. <code>score += 5</code> is shorthand for <code>score = score + 5</code>.</p>
+<pre class="code">score = 10
+score += 5    # same as: score = score + 5
+print(score)  # 15
+
+score -= 3    # 12
+score *= 2    # 24
+score //= 5   # 4
+print(score)  # 4</pre>
+<table>
+<tr><th>Shorthand</th><th>Means</th></tr>
+<tr><td><code>x += 2</code></td><td><code>x = x + 2</code></td></tr>
+<tr><td><code>x -= 2</code></td><td><code>x = x - 2</code></td></tr>
+<tr><td><code>x *= 2</code></td><td><code>x = x * 2</code></td></tr>
+<tr><td><code>x /= 2</code></td><td><code>x = x / 2</code></td></tr>
+<tr><td><code>x **= 2</code></td><td><code>x = x ** 2</code></td></tr>
+</table>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Augmented assignment needs the variable to exist already, because it reads the old value first. <code>count += 1</code> when <code>count</code> was never created raises a <code>NameError</code>. Set <code>count = 0</code> before the loop that updates it.</p></div>
+
+<h2>There is no ++ in Python</h2>
+<p>If you come from C, Java or JavaScript, you will reach for <code>x++</code> to add one. Python has no <code>++</code> or <code>--</code> operators at all. Use <code>x += 1</code> instead.</p>
+<pre class="code">count = 0
+count += 1     # the Python way to add one
+print(count)   # 1</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Writing <code>++x</code> will not error, but it does nothing useful. Python reads it as two "positive" signs applied to <code>x</code>, so <code>++5</code> is just <code>5</code>. It silently fails to increment, which makes it a nasty trap for newcomers.</p></div>
+`
+},
+{
+  title:"Comparison Operators",
+  starter:'# Comparisons always produce True or False\nprint(7 > 3)      # True\nprint(7 == 3)     # False\n\n# You can chain comparisons in Python\nage = 18\nprint(13 <= age <= 19)   # True\n',
+  html:`
+<p>A <strong>comparison operator</strong> asks a yes/no question about two values and answers with a Boolean — <code>True</code> or <code>False</code>. These are the operators that drive every decision your programs will make in Module 4.</p>
+<table>
+<tr><th>Operator</th><th>Question</th><th>Example</th><th>Result</th></tr>
+<tr><td><code>==</code></td><td>Are they equal?</td><td><code>5 == 5</code></td><td><code>True</code></td></tr>
+<tr><td><code>!=</code></td><td>Are they different?</td><td><code>5 != 3</code></td><td><code>True</code></td></tr>
+<tr><td><code>&gt;</code></td><td>Greater than?</td><td><code>5 &gt; 3</code></td><td><code>True</code></td></tr>
+<tr><td><code>&lt;</code></td><td>Less than?</td><td><code>5 &lt; 3</code></td><td><code>False</code></td></tr>
+<tr><td><code>&gt;=</code></td><td>Greater or equal?</td><td><code>5 &gt;= 5</code></td><td><code>True</code></td></tr>
+<tr><td><code>&lt;=</code></td><td>Less or equal?</td><td><code>3 &lt;= 5</code></td><td><code>True</code></td></tr>
+</table>
+
+<h2>The == versus = trap</h2>
+<p>This is the single most common beginner error. A single <code>=</code> <strong>assigns</strong> a value; a double <code>==</code> <strong>compares</strong> two values. They are completely different.</p>
+<pre class="code">score = 10           # assignment: put 10 into score
+print(score == 10)   # comparison: is score equal to 10?  -> True</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Writing <code>if score = 10:</code> instead of <code>if score == 10:</code>. Python catches this one with a <code>SyntaxError</code>, which is helpful — but the habit of mixing them up leads to bugs, so stay alert.</p></div>
+
+<h2>Chaining comparisons</h2>
+<p>Python lets you chain comparisons the way maths does. <code>13 &lt;= age &lt;= 19</code> reads exactly as it looks: "age is between 13 and 19". Most languages do not allow this and force you to write it as two parts joined with <em>and</em>.</p>
+<pre class="code">age = 18
+print(13 &lt;= age &lt;= 19)          # True
+# Python treats it as: 13 &lt;= age  and  age &lt;= 19</pre>
+
+<h2>Comparing text</h2>
+<p>Comparisons work on strings too. Python compares them character by character using each character's Unicode number, which for ordinary words means alphabetical order.</p>
+<pre class="code">print("apple" &lt; "banana")   # True  (a comes before b)
+print("Zebra" &lt; "apple")    # True  (capital Z is 90, small a is 97)</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Every capital letter comes before every small letter, because in Unicode <code>A</code>–<code>Z</code> are numbered 65–90 and <code>a</code>–<code>z</code> are 97–122. That is why <code>"Zebra"</code> sorts before <code>"apple"</code>. Convert both sides to the same case with <code>.lower()</code> for a case-insensitive comparison.</p></div>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Because of the float precision problem from Module 2, avoid <code>==</code> on floats: <code>0.1 + 0.2 == 0.3</code> is <code>False</code>. Compare with <code>math.isclose</code> instead.</p></div>
+`
+},
+{
+  title:"Logical & Membership",
+  starter:'# Logical operators combine True/False values\nhas_ticket = True\nhas_id = False\nprint(has_ticket and has_id)   # False\nprint(has_ticket or has_id)    # True\nprint(not has_id)              # True\n\n# Membership checks whether something is inside\nprint("a" in "CadetX")         # True\n',
+  html:`
+<p>The operators in this lesson let you combine yes/no answers and ask whether something is contained in something else. Together with comparisons, they are how a program reasons.</p>
+
+<h2>Logical operators: and, or, not</h2>
+<p>There are three: <code>and</code>, <code>or</code> and <code>not</code>. Note they are English words, not symbols like <code>&amp;&amp;</code> or <code>||</code> from other languages.</p>
+<table>
+<tr><th>Operator</th><th>Result is True when…</th></tr>
+<tr><td><code>a and b</code></td><td>both <code>a</code> and <code>b</code> are true</td></tr>
+<tr><td><code>a or b</code></td><td>at least one of them is true</td></tr>
+<tr><td><code>not a</code></td><td><code>a</code> is false</td></tr>
+</table>
+<pre class="code">print(True and False)   # False
+print(True or False)    # True
+print(not True)         # False</pre>
+
+<h3>Short-circuit evaluation</h3>
+<p>Python is lazy with <code>and</code> and <code>or</code>: it stops as soon as the answer is certain. With <code>and</code>, if the first value is false the whole thing must be false, so the second is never checked. With <code>or</code>, if the first value is true the answer is already true.</p>
+<pre class="code">print(False and 1 / 0)   # False — the 1/0 is never run, so no error
+print(True or 1 / 0)     # True  — again the risky part is skipped</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Precedence among them is <code>not</code> first, then <code>and</code>, then <code>or</code>. So <code>not True or True</code> means <code>(not True) or True</code> → <code>True</code>. Add brackets when it is not obvious.</p></div>
+
+<h2>Membership: in and not in</h2>
+<p>The <code>in</code> operator asks whether a value appears inside a string or a collection, giving back <code>True</code> or <code>False</code>.</p>
+<pre class="code">print("a" in "CadetX")           # True
+print("z" in "CadetX")           # False
+colours = ["red", "green", "blue"]
+print("green" in colours)         # True
+print("pink" not in colours)      # True</pre>
+
+<h2>Identity: is and is not</h2>
+<p><code>is</code> looks like <code>==</code> but asks a different question. <code>==</code> asks "are the values equal?"; <code>is</code> asks "are these the exact same object in memory?"</p>
+<pre class="code">name = None
+print(name is None)     # True — the correct way to test for None
+print(name == None)     # also True, but "is" is preferred here</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Do not use <code>is</code> to compare ordinary values like numbers or strings. <code>x is 1000</code> can be <code>False</code> even when <code>x</code> equals <code>1000</code>, because they may be separate objects. Use <code>==</code> for values, and reserve <code>is</code> for <code>None</code>, <code>True</code> and <code>False</code>.</p></div>
+`
+},
+{
+  title:"Bitwise Operators",
+  starter:'# Bitwise operators work on the binary bits of integers\nprint(5 & 3)     # 1\nprint(5 | 3)     # 7\nprint(bin(5))    # 0b101\n\n# Shifting left multiplies by powers of two\nprint(1 << 4)    # 16\n',
+  html:`
+<p>Every integer is stored as a pattern of <strong>bits</strong> — 1s and 0s. Bitwise operators act on those individual bits rather than on the number as a whole. They are the most low-level operators in the language, and understanding them starts with seeing the binary.</p>
+<pre class="code">print(bin(5))   # 0b101   (5 is 1,0,1 in binary)
+print(bin(3))   # 0b11    (3 is    1,1)</pre>
+
+<h2>The bitwise operators</h2>
+<table>
+<tr><th>Operator</th><th>Name</th><th>What it does</th></tr>
+<tr><td><code>&amp;</code></td><td>AND</td><td>1 only where <em>both</em> bits are 1</td></tr>
+<tr><td><code>|</code></td><td>OR</td><td>1 where <em>either</em> bit is 1</td></tr>
+<tr><td><code>^</code></td><td>XOR</td><td>1 where the two bits <em>differ</em></td></tr>
+<tr><td><code>~</code></td><td>NOT</td><td>flips every bit</td></tr>
+<tr><td><code>&lt;&lt;</code></td><td>Left shift</td><td>moves bits left, filling with 0</td></tr>
+<tr><td><code>&gt;&gt;</code></td><td>Right shift</td><td>moves bits right, dropping the ends</td></tr>
+</table>
+<p>Lining up the bits makes AND and OR clear. Take <code>5</code> (<code>101</code>) and <code>3</code> (<code>011</code>):</p>
+<pre class="code">#   5 = 1 0 1
+#   3 = 0 1 1
+# -------------
+# AND = 0 0 1  -> 1
+#  OR = 1 1 1  -> 7
+# XOR = 1 1 0  -> 6
+
+print(5 &amp; 3)   # 1
+print(5 | 3)   # 7
+print(5 ^ 3)   # 6</pre>
+
+<h2>Shifting is multiplying and dividing by two</h2>
+<p>Shifting the bits left by one doubles the number; shifting right by one halves it, dropping any remainder. Each shift by <code>n</code> multiplies or divides by <code>2</code> to the power <code>n</code>.</p>
+<pre class="code">print(1 &lt;&lt; 4)    # 16   (1 * 2**4)
+print(20 &gt;&gt; 2)   # 5    (20 // 2**2)</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Do not confuse bitwise <code>&amp;</code> and <code>|</code> with logical <code>and</code> and <code>or</code>. <code>5 &amp; 3</code> is <code>1</code> (bit maths), while <code>5 and 3</code> is <code>3</code> (logical). They are different operators that only look related.</p></div>
+<div class="callout note"><span class="lbl">Note</span><p>The <code>~</code> operator can give a surprising negative number: <code>~5</code> is <code>-6</code>. That is because Python stores negatives using a scheme called two's complement, where flipping every bit of <code>5</code> lands on <code>-6</code>. You rarely need this as a beginner — just know why the sign appears.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Start with <code>score = 10</code>, add 5 to it using the <code>+=</code> operator, then print the result.',
+  c:'score = 10\nscore += 5\nprint(score)   # 15',
+  e:'<code>+=</code> reads the current value of <code>score</code>, adds 5, and stores the result back into the same name.'},
+ {p:'Print <code>2 + 3 * 4</code> and then <code>(2 + 3) * 4</code> on separate lines to see how brackets change the result.',
+  c:'print(2 + 3 * 4)     # 14\nprint((2 + 3) * 4)   # 20',
+  e:'Without brackets, multiplication runs before addition; the brackets force the addition to happen first.'},
+ {p:'Print whether <code>7</code> is greater than <code>3</code>, and whether <code>7</code> equals <code>3</code>.',
+  c:'print(7 > 3)    # True\nprint(7 == 3)   # False',
+  e:'Comparison operators always return a Boolean, so each line prints either True or False.'},
+ {p:'Set <code>age = 18</code> and use a chained comparison to print whether age is between 13 and 19 inclusive.',
+  c:'age = 18\nprint(13 <= age <= 19)   # True',
+  e:'Python reads the chain as <code>13 &lt;= age and age &lt;= 19</code>, so it is True only when both parts hold.'},
+ {p:'Print the result of comparing the strings <code>"apple"</code> and <code>"banana"</code> with the less-than operator.',
+  c:'print("apple" < "banana")   # True',
+  e:'Strings compare character by character in Unicode order, and because a comes before b, apple is less than banana.'},
+ {p:'Set <code>has_ticket = True</code> and <code>has_id = False</code>, then print <code>has_ticket and has_id</code> and <code>has_ticket or has_id</code>.',
+  c:'has_ticket = True\nhas_id = False\nprint(has_ticket and has_id)   # False\nprint(has_ticket or has_id)    # True',
+  e:'<code>and</code> needs both sides true, while <code>or</code> needs only one, so they give different answers here.'},
+ {p:'Print <code>not True</code> and <code>not 0</code> to see how <code>not</code> behaves on a Boolean and on a falsy number.',
+  c:'print(not True)   # False\nprint(not 0)      # True',
+  e:'<code>not</code> flips truthiness: True becomes False, and 0 is falsy so <code>not 0</code> becomes True.'},
+ {p:'Using the <code>in</code> operator, print whether <code>"a"</code> appears in <code>"CadetX"</code> and whether <code>"z"</code> appears in it.',
+  c:'print("a" in "CadetX")   # True\nprint("z" in "CadetX")   # False',
+  e:'<code>in</code> scans the string and returns True only when the character is present.'},
+ {p:'Create a list <code>colours = ["red", "green", "blue"]</code>, then print whether <code>"green"</code> is in it and whether <code>"pink"</code> is not in it.',
+  c:'colours = ["red", "green", "blue"]\nprint("green" in colours)      # True\nprint("pink" not in colours)   # True',
+  e:'<code>in</code> and <code>not in</code> work on lists just as on strings, checking membership of whole items.'},
+ {p:'Set <code>name = None</code> and print the correct identity test for None using <code>is</code>.',
+  c:'name = None\nprint(name is None)   # True',
+  e:'<code>is</code> checks that both names point to the exact same object, which is the recommended way to test for None.'},
+ {p:'Print <code>5 &amp; 3</code>, <code>5 | 3</code>, and the binary form of 5 with <code>bin(5)</code>.',
+  c:'print(5 & 3)    # 1\nprint(5 | 3)    # 7\nprint(bin(5))   # 0b101',
+  e:'Bitwise AND keeps bits set in both numbers, OR keeps bits set in either, and <code>bin()</code> shows the underlying binary.'},
+ {p:'Print <code>1 &lt;&lt; 4</code> and <code>20 &gt;&gt; 2</code> to see how shifting multiplies and divides by powers of two.',
+  c:'print(1 << 4)    # 16\nprint(20 >> 2)   # 5',
+  e:'Shifting left by 4 multiplies by 2 to the power 4, and shifting right by 2 divides by 2 to the power 2, dropping the remainder.'}
+];
+
+const NAV = [
+ {label:"1. Getting Started", locked:true, items:[
+   {label:"What is Python?"},{label:"Python Syntax & Indentation"},{label:"Comments"},
+   {type:"tasks", label:"Module 1 Tasks", count:12}
+ ]},
+ {label:"2. Variables & Data Types", locked:true, items:[
+   {label:"Variables"},{label:"Numbers"},{label:"Strings"},{label:"Booleans & Type Conversion"},
+   {type:"tasks", label:"Module 2 Tasks", count:12}
+ ]},
+ {label:"3. Operators", items:[
+   {type:"lesson", i:0, label:"Arithmetic & Assignment"},
+   {type:"lesson", i:1, label:"Comparison Operators"},
+   {type:"lesson", i:2, label:"Logical & Membership"},
+   {type:"lesson", i:3, label:"Bitwise Operators"},
+   {type:"tasks", label:"Module 3 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='3. Operators';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='3. Operators';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

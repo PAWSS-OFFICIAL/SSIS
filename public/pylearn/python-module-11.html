@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 11: Advanced Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="/logo.jpg" alt="SSIS Logo" style="height:24px; border-radius:4px; margin-right:8px;" />
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 4 / 4 — Mastery</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Comprehensions in Depth",
+  starter:'# A list comprehension builds a list in one readable line\nsquares = [n * n for n in range(1, 6)]\nprint(squares)          # [1, 4, 9, 16, 25]\n\n# with a condition, you can filter as you build\nevens = [n for n in range(1, 11) if n % 2 == 0]\nprint(evens)            # [2, 4, 6, 8, 10]\n',
+  html:`
+<p>You met list comprehensions briefly in Module 6. They are worth a proper look, because they are one of the most distinctive and useful features of Python. A <strong>comprehension</strong> builds a whole collection in a single expression, replacing a loop that appends to a list.</p>
+
+<h2>From loop to comprehension</h2>
+<p>Compare the two ways of building a list of squares. They produce the same result; the comprehension is shorter and reads as one idea.</p>
+<pre class="code"># the long way
+squares = []
+for n in range(1, 6):
+    squares.append(n * n)
+
+# the comprehension
+squares = [n * n for n in range(1, 6)]
+print(squares)   # [1, 4, 9, 16, 25]</pre>
+<p>Read it left to right: <em>"the value <code>n * n</code>, for each <code>n</code> in the range"</em>. The expression comes first, then the loop that feeds it.</p>
+
+<h2>Filtering with a condition</h2>
+<p>Add an <code>if</code> at the end to keep only some items. This filters as it builds.</p>
+<pre class="code">numbers = range(1, 11)
+evens = [n for n in numbers if n % 2 == 0]
+print(evens)   # [2, 4, 6, 8, 10]</pre>
+<div class="callout note"><span class="lbl">Note</span><p>An <code>if</code> at the <em>end</em> filters items out. That is different from a conditional expression at the <em>start</em>, which chooses the value: <code>["even" if n % 2 == 0 else "odd" for n in numbers]</code>. The position of the <code>if</code> changes its job entirely.</p></div>
+
+<h2>Dictionary and set comprehensions</h2>
+<p>The same shape works with curly brackets to build dictionaries and sets.</p>
+<pre class="code"># dictionary comprehension: number -> its square
+squares_map = {n: n * n for n in range(1, 5)}
+print(squares_map)   # {1: 1, 2: 4, 3: 9, 4: 16}
+
+# set comprehension: unique lengths of some words
+words = ["hi", "hey", "hello", "yo"]
+lengths = {len(w) for w in words}
+print(lengths)       # {2, 3, 5}</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Do not cram too much into a comprehension. If it needs several conditions or a nested loop and stops being readable in one glance, a normal <code>for</code> loop is the better, clearer choice. Comprehensions are for simple, tidy transformations.</p></div>
+`
+},
+{
+  title:"Iterators & Generators",
+  starter:'# A generator produces values one at a time, on demand\ndef count_up_to(limit):\n    n = 1\n    while n <= limit:\n        yield n         # hand back one value, then pause\n        n += 1\n\nfor number in count_up_to(5):\n    print(number)       # 1 2 3 4 5\n',
+  html:`
+<p>When you loop over a list, Python fetches its items one after another. The machinery that hands out items one at a time is called an <strong>iterator</strong>. A <strong>generator</strong> is an easy way to create your own iterator, producing values on demand instead of building them all at once.</p>
+
+<h2>The problem generators solve</h2>
+<p>Imagine you want the first million square numbers. Building them all into a list uses a lot of memory, even if you only need them one at a time. A generator produces each value as it is asked for, holding just one in memory at a time.</p>
+
+<h2>Writing a generator with yield</h2>
+<p>A generator looks like a normal function, but it uses <code>yield</code> instead of <code>return</code>. Each <code>yield</code> hands back one value and <strong>pauses</strong> the function, which resumes from that exact spot the next time a value is requested.</p>
+<pre class="code">def count_up_to(limit):
+    n = 1
+    while n &lt;= limit:
+        yield n         # give one value, then pause here
+        n += 1
+
+for number in count_up_to(3):
+    print(number)
+# 1
+# 2
+# 3</pre>
+<div class="callout note"><span class="lbl">Note</span><p>The key difference from <code>return</code>: <code>return</code> ends a function for good, while <code>yield</code> pauses it and remembers where it was. That memory of position is what lets a generator produce a long sequence lazily.</p></div>
+
+<h2>Generator expressions</h2>
+<p>There is a comprehension-style shortcut too. Swap the square brackets of a list comprehension for round ones, and you get a <strong>generator expression</strong> that produces values lazily instead of building a list.</p>
+<pre class="code"># a list — builds everything now
+squares_list = [n * n for n in range(1, 6)]
+
+# a generator — produces values only when asked
+squares_gen = (n * n for n in range(1, 6))
+print(sum(squares_gen))   # 55  (values produced one by one)</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>A generator can be used only <em>once</em>. After you have looped through it, it is exhausted and produces nothing more. If you need the values again, either recreate the generator or build a list.</p></div>
+`
+},
+{
+  title:"Decorators",
+  starter:'# A decorator wraps a function to add behaviour around it\ndef announce(func):\n    def wrapper():\n        print("Before the function")\n        func()\n        print("After the function")\n    return wrapper\n\n@announce\ndef say_hello():\n    print("Hello!")\n\nsay_hello()\n',
+  html:`
+<p>A <strong>decorator</strong> is a function that takes another function and gives back a new, enhanced version of it. It lets you add behaviour <em>around</em> a function — before it, after it, or both — without changing the function's own code. To understand them, you first need one idea: in Python, functions are values.</p>
+
+<h2>Functions are values</h2>
+<p>A function can be stored in a variable, passed to another function, and returned from one — just like a number or a string. This is what makes decorators possible.</p>
+<pre class="code">def shout(text):
+    return text.upper()
+
+yell = shout            # store the function itself (no brackets)
+print(yell("hello"))    # HELLO — same function, new name</pre>
+
+<h2>Building a decorator</h2>
+<p>A decorator defines an inner <code>wrapper</code> function that calls the original and adds something around it, then returns that wrapper.</p>
+<pre class="code">def announce(func):
+    def wrapper():
+        print("Starting...")
+        func()                 # run the original function
+        print("Finished.")
+    return wrapper
+
+def greet():
+    print("Hello from CadetX")
+
+greet = announce(greet)   # wrap greet in the extra behaviour
+greet()
+# Starting...
+# Hello from CadetX
+# Finished.</pre>
+
+<h2>The @ shortcut</h2>
+<p>Writing <code>greet = announce(greet)</code> by hand is clumsy. Python gives you the <code>@</code> syntax, which does exactly the same thing, placed just above the function.</p>
+<pre class="code">def announce(func):
+    def wrapper():
+        print("Starting...")
+        func()
+        print("Finished.")
+    return wrapper
+
+@announce               # this means: greet = announce(greet)
+def greet():
+    print("Hello from CadetX")
+
+greet()
+# Starting...
+# Hello from CadetX
+# Finished.</pre>
+<div class="callout note"><span class="lbl">Note</span><p>You have already seen a decorator: <code>@property</code> from Module 8. The <code>@</code> line always means "pass the function below to the decorator above, and use what it returns in place of the original".</p></div>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>If the function being decorated takes arguments, the wrapper must accept them too — usually written <code>def wrapper(*args, **kwargs):</code> and passed on as <code>func(*args, **kwargs)</code>. A wrapper with no parameters cannot wrap a function that needs some.</p></div>
+`
+},
+{
+  title:"Type Hints",
+  starter:'# Type hints document what types a function expects and returns\ndef add(a: int, b: int) -> int:\n    return a + b\n\nprint(add(3, 4))   # 7\n\nname: str = "CadetX"\nprint(name)\n',
+  html:`
+<p>Python is dynamically typed — you never declare the type of a variable. <strong>Type hints</strong> let you add that information anyway, as optional labels. They do not change how the code runs; they document your intent, help editors catch mistakes, and make code easier to read.</p>
+
+<h2>Hinting function parameters and returns</h2>
+<p>Add <code>: type</code> after a parameter to say what it should be, and <code>-&gt; type</code> before the colon to say what the function returns.</p>
+<pre class="code">def add(a: int, b: int) -&gt; int:
+    return a + b
+
+def greet(name: str) -&gt; str:
+    return f"Hello, {name}"
+
+print(add(2, 3))        # 7
+print(greet("Alex"))    # Hello, Alex</pre>
+<p>Read <code>a: int</code> as "a is expected to be an int", and <code>-&gt; int</code> as "this function returns an int".</p>
+
+<h2>Hinting variables</h2>
+<pre class="code">count: int = 0
+title: str = "CadetX"
+scores: list = [88, 92, 79]
+active: bool = True</pre>
+
+<h2>They are hints, not rules</h2>
+<p>This is the crucial point: Python does <strong>not</strong> enforce type hints. Passing the wrong type still runs — the hint is ignored at runtime. Hints are checked by separate tools and editors, not by Python itself.</p>
+<pre class="code">def double(n: int) -&gt; int:
+    return n * 2
+
+print(double("ab"))   # abab — Python ignores the hint and runs anyway</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Because hints are not enforced, they never cause errors on their own. Their value is in the tooling: editors use them to warn you before you run the code, and a reader instantly sees what a function expects. Think of them as documentation the computer can also read.</p></div>
+<div class="callout tip"><span class="lbl">Tip</span><p>You do not need hints on every line. They pay off most on function signatures, where they tell a reader exactly what to pass in and what comes back — the place confusion is most costly.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Use a list comprehension to build a list of the cubes of the numbers 1 to 5, then print it.',
+  c:'cubes = [n ** 3 for n in range(1, 6)]\nprint(cubes)   # [1, 8, 27, 64, 125]',
+  e:'The comprehension runs the loop and collects <code>n ** 3</code> for each number into a new list in one line.'},
+ {p:'Use a list comprehension with a condition to keep only the even numbers from 1 to 10.',
+  c:'evens = [n for n in range(1, 11) if n % 2 == 0]\nprint(evens)   # [2, 4, 6, 8, 10]',
+  e:'The <code>if</code> at the end filters out any number that is not even before it is added to the list.'},
+ {p:'Use a comprehension to turn <code>["hi", "hello", "hey"]</code> into a list of their lengths.',
+  c:'words = ["hi", "hello", "hey"]\nlengths = [len(w) for w in words]\nprint(lengths)   # [2, 5, 3]',
+  e:'The expression <code>len(w)</code> is applied to each word, producing a list of lengths.'},
+ {p:'Use a dictionary comprehension to map each number 1 to 4 to its square.',
+  c:'squares = {n: n * n for n in range(1, 5)}\nprint(squares)   # {1: 1, 2: 4, 3: 9, 4: 16}',
+  e:'Curly brackets with a <code>key: value</code> expression build a dictionary instead of a list.'},
+ {p:'Write a generator function <code>count_up_to(limit)</code> that yields the numbers 1 up to <code>limit</code>, then loop over it printing each.',
+  c:'def count_up_to(limit):\n    n = 1\n    while n <= limit:\n        yield n\n        n += 1\n\nfor number in count_up_to(4):\n    print(number)   # 1 2 3 4',
+  e:'Each <code>yield</code> hands back one value and pauses the function until the loop asks for the next.'},
+ {p:'Write a generator <code>squares(limit)</code> that yields the squares of 1 up to <code>limit</code>, then print them in a loop.',
+  c:'def squares(limit):\n    for n in range(1, limit + 1):\n        yield n * n\n\nfor s in squares(4):\n    print(s)   # 1 4 9 16',
+  e:'The generator produces one square at a time on demand rather than building the whole list first.'},
+ {p:'Create a generator expression for the squares of 1 to 5 and print their sum with <code>sum()</code>.',
+  c:'total = sum(n * n for n in range(1, 6))\nprint(total)   # 55',
+  e:'A generator expression uses round brackets and feeds values one by one straight into <code>sum()</code>.'},
+ {p:'Write a decorator <code>announce</code> that prints a line before and after the wrapped function, and use it on a <code>say_hello()</code> function with the <code>@</code> syntax.',
+  c:'def announce(func):\n    def wrapper():\n        print("Before")\n        func()\n        print("After")\n    return wrapper\n\n@announce\ndef say_hello():\n    print("Hello!")\n\nsay_hello()\n# Before\n# Hello!\n# After',
+  e:'The <code>@announce</code> replaces <code>say_hello</code> with the wrapper, which runs extra code around the original.'},
+ {p:'Show that functions are values: define a <code>shout(text)</code> function, store it in another variable, and call it through the new name.',
+  c:'def shout(text):\n    return text.upper()\n\nyell = shout\nprint(yell("hello"))   # HELLO',
+  e:'A function can be stored in a variable and called through that new name, because functions are ordinary values.'},
+ {p:'Write a decorator whose wrapper accepts arguments using <code>*args</code>, and apply it to an <code>add(a, b)</code> function so the wrapped call still works.',
+  c:'def logged(func):\n    def wrapper(*args, **kwargs):\n        print("Calling with", args)\n        return func(*args, **kwargs)\n    return wrapper\n\n@logged\ndef add(a, b):\n    return a + b\n\nprint(add(3, 4))\n# Calling with (3, 4)\n# 7',
+  e:'Using <code>*args</code> and <code>**kwargs</code> lets the wrapper forward any arguments to the original function.'},
+ {p:'Write a function <code>multiply(a, b)</code> with type hints saying both parameters are <code>int</code> and it returns an <code>int</code>, then print <code>multiply(4, 5)</code>.',
+  c:'def multiply(a: int, b: int) -> int:\n    return a * b\n\nprint(multiply(4, 5))   # 20',
+  e:'The hints document that two ints go in and an int comes out, though Python does not enforce them at runtime.'},
+ {p:'Write a function <code>greet(name: str) -> str</code> that returns a greeting, add a type-hinted variable, and print the greeting.',
+  c:'def greet(name: str) -> str:\n    return f"Hello, {name}"\n\nperson: str = "CadetX"\nprint(greet(person))   # Hello, CadetX',
+  e:'The signature hints describe the expected string in and out, and the variable hint documents that <code>person</code> holds a string.'}
+];
+
+const NAV = [
+ {label:"10. Modules & Standard Library", locked:true, items:[
+   {label:"Importing Modules"},{label:"The Standard Library"},{label:"Writing Your Own Modules"},{label:"Packages & pip"},
+   {type:"tasks", label:"Module 10 Tasks", count:12}
+ ]},
+ {label:"11. Advanced Python", items:[
+   {type:"lesson", i:0, label:"Comprehensions in Depth"},
+   {type:"lesson", i:1, label:"Iterators & Generators"},
+   {type:"lesson", i:2, label:"Decorators"},
+   {type:"lesson", i:3, label:"Type Hints"},
+   {type:"tasks", label:"Module 11 Tasks", count:12}
+ ]},
+ {label:"12. Projects", locked:true, items:[
+   {label:"Number Guessing Game"},{label:"To-Do List App"},{label:"Data Summariser"},{label:"Putting It Together"},
+   {type:"tasks", label:"Module 12 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='11. Advanced Python';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='11. Advanced Python';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

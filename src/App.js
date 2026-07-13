@@ -48,8 +48,10 @@ import { CanteenPage } from "./pages/CanteenPage";
 import { CanteenStaffPortal } from "./pages/CanteenStaffPortal";
 import { PyLearnDashboardPage } from "./pages/PyLearnDashboardPage";
 import { PyLearnModulePage } from "./pages/PyLearnModulePage";
-import { PyLearnCertificatePage } from "./pages/PyLearnCertificatePage";
 import { AdminCanteenOrders } from "./pages/AdminCanteenOrders";
+import { JEEMockAdmin } from "./pages/JEEMockAdmin";
+import { JEEMockStudent } from "./pages/JEEMockStudent";
+import { MockTestRunner } from "./pages/MockTestRunner";
 
 import "./App.css";
 
@@ -285,6 +287,12 @@ function App() {
             </ProtectedRoute>
           } />
 
+          <Route path="/admin/jee-mock" element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <JEEMockAdmin />
+            </ProtectedRoute>
+          } />
+
           <Route path="/teacher" element={
             <ProtectedRoute allowedRoles={["Teacher"]}>
               <TeacherDashboard />
@@ -302,9 +310,21 @@ function App() {
               <PyLearnDashboardPage />
             </ProtectedRoute>
           } />
-          <Route path="/student/pylearn/:moduleId" element={
+          <Route path="/student/pylearn/module/:moduleId" element={
             <ProtectedRoute allowedRoles={["Student"]}>
               <PyLearnModulePage />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/student/jee-mock" element={
+            <ProtectedRoute allowedRoles={["Student"]}>
+              <JEEMockStudent />
+            </ProtectedRoute>
+          } />
+
+          <Route path="/student/jee-mock/runner/:quizId" element={
+            <ProtectedRoute allowedRoles={["Student"]}>
+              <MockTestRunner />
             </ProtectedRoute>
           } />
           <Route path="/student/pylearn/certificate" element={

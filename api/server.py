@@ -5414,16 +5414,6 @@ async def get_low_bandwidth_content(
 
 # Note: Logging is configured at the top of the file
 
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(
-        app,
-        host="0.0.0.0",
-        port=8000,
-        reload=False,
-        log_level="info"
-    )
-
 # ==========================================
 # EXAM HALLS & CLASSROOMS
 # ==========================================
@@ -5511,13 +5501,116 @@ async def send_announcement(ann: AnnouncementCreate, token: dict = Depends(requi
             print(f"[MOCK WHATSAPP] Sent to Class {ann.target_class_id} Section {ann.target_section_id}: {ann.message}")
             return {"message": "Announcement sent"}
 # ==========================================
+# PYLEARN ROUTES (inlined to avoid circular import)
+# ==========================================
+
+@api_router.get("/student/pylearn/progress")
+def get_pylearn_progress(token: dict = Depends(require_role("Student"))):
+    user_id = token['user_id']
+    with get_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT task_id FROM pylearn_task_completions WHERE user_id = %s AND passed = TRUE", (user_id,))
+            completions = [row['task_id'] for row in cursor.fetchall()]
+            cursor.execute("SELECT module_number FROM pylearn_module_stars WHERE user_id = %s", (user_id,))
+            stars = [row['module_number'] for row in cursor.fetchall()]
+            cursor.execute("SELECT * FROM pylearn_cert_attempts WHERE user_id = %s ORDER BY attempted_at DESC", (user_id,))
+            certAttempts = cursor.fetchall()
+            return {
+                "completions": completions,
+                "stars": stars,
+                "certAttempts": certAttempts,
+                "unlockedCertificate": len(stars) >= 12
+            }
+
+@api_router.get("/student/pylearn/module/{module_id}")
+def get_pylearn_module(module_id: int, token: dict = Depends(require_role("Student"))):
+    with get_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT * FROM pylearn_tasks WHERE module_number = %s ORDER BY task_order ASC", (module_id,))
+            tasks = cursor.fetchall()
+            if not tasks:
+                raise HTTPException(status_code=404, detail="Module not found or has no tasks")
+            return {
+                "id": module_id,
+                "title": f"Module {module_id}",
+                "lessons": [{"id": 1, "title": "Interactive Task", "content": tasks[0]['prompt'], "starter": tasks[0]['starter_code']}],
+                "tasks": [{"id": str(t['id']), "title": t['title'], "prompt": t['prompt'], "expectedOutput": t['expected_output']} for t in tasks]
+            }
+
+@api_router.post("/student/pylearn/submit")
+def submit_pylearn_task(data: dict = Body(...), token: dict = Depends(require_role("Student"))):
+    user_id = token['user_id']
+    task_id = data.get('taskId')
+    stdout = data.get('stdout', '')
+    with get_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT * FROM pylearn_tasks WHERE id = %s", (task_id,))
+            task = cursor.fetchone()
+            if not task:
+                raise HTTPException(status_code=404, detail="Task not found")
+            clean_user = ' '.join(stdout.split())
+            clean_expected = ' '.join((task['expected_output'] or '').split())
+            passed = (clean_user == clean_expected)
+            if not passed:
+                return {"success": False, "error": "Output does not match expected output", "userOutput": clean_user, "expectedOutput": clean_expected}
+            cursor.execute("INSERT INTO pylearn_task_completions (user_id, task_id, passed) VALUES (%s, %s, TRUE) ON DUPLICATE KEY UPDATE passed = TRUE, completed_at = CURRENT_TIMESTAMP", (user_id, task_id))
+            module_num = task['module_number']
+            cursor.execute("SELECT COUNT(*) as count FROM pylearn_tasks WHERE module_number = %s", (module_num,))
+            total_tasks = cursor.fetchone()['count']
+            cursor.execute("SELECT COUNT(*) as count FROM pylearn_task_completions c JOIN pylearn_tasks t ON c.task_id = t.id WHERE c.user_id = %s AND t.module_number = %s AND c.passed = TRUE", (user_id, module_num))
+            passed_tasks = cursor.fetchone()['count']
+            starAwarded = False
+            if passed_tasks >= total_tasks:
+                cursor.execute("INSERT IGNORE INTO pylearn_module_stars (user_id, module_number) VALUES (%s, %s)", (user_id, module_num))
+                if cursor.rowcount > 0:
+                    starAwarded = True
+            cursor.execute("SELECT COUNT(*) as count FROM pylearn_module_stars WHERE user_id = %s", (user_id,))
+            stars_count = cursor.fetchone()['count']
+            conn.commit()
+            return {"success": True, "starAwarded": starAwarded, "starsCount": stars_count, "unlockedCertificate": stars_count >= 12}
+
+@api_router.get("/student/pylearn/certificate/questions")
+def get_pylearn_cert_questions(token: dict = Depends(require_role("Student"))):
+    with get_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT id, text, optionA, optionB, optionC, optionD FROM pylearn_cert_questions LIMIT 30")
+            return cursor.fetchall()
+
+@api_router.post("/student/pylearn/certificate/submit")
+def submit_pylearn_cert(data: dict = Body(...), token: dict = Depends(require_role("Student"))):
+    user_id = token['user_id']
+    cert_name = data.get('certificateName', '')
+    answers = data.get('answers', [])
+    with get_db_connection() as conn:
+        with conn.cursor() as cursor:
+            cursor.execute("SELECT COUNT(*) as count FROM pylearn_module_stars WHERE user_id = %s", (user_id,))
+            stars = cursor.fetchone()['count']
+            if stars < 12:
+                raise HTTPException(status_code=403, detail="Certificate exam locked. Earn 12 stars first.")
+            cursor.execute("SELECT id, correct_answer FROM pylearn_cert_questions")
+            correct_map = {str(r['id']): r['correct_answer'] for r in cursor.fetchall()}
+            score = 0
+            for ans in answers:
+                qid = str(ans.get('questionId'))
+                selected = ans.get('selectedAnswer', '').strip().upper()
+                if correct_map.get(qid) == selected:
+                    score += 1
+            passed = score >= 24
+            cursor.execute("INSERT INTO pylearn_cert_attempts (user_id, certificate_name, score, passed) VALUES (%s, %s, %s, %s)", (user_id, cert_name, score, passed))
+            if not passed:
+                cursor.execute("DELETE FROM pylearn_module_stars WHERE user_id = %s", (user_id,))
+            conn.commit()
+            return {"success": True, "score": score, "passed": passed, "correctAnswersCount": score, "totalQuestions": 30}
+
+# ==========================================
 # FINAL APP MOUNTING & ROUTING
 # ==========================================
 
+from routers.jee_mock import router as jee_mock_router
+api_router.include_router(jee_mock_router)
+
 # Include the router
 app.include_router(api_router)
-from routers.pylearn import router as pylearn_router
-app.include_router(pylearn_router, prefix="/api")
 
 # Mount React build for single-server execution (Serverless-like behavior)
 from fastapi.staticfiles import StaticFiles
@@ -5525,15 +5618,23 @@ from fastapi.responses import FileResponse
 
 build_dir = ROOT_DIR.parent / "build"
 if build_dir.exists():
-    # Serve static assets (js, css, media)
     app.mount("/static", StaticFiles(directory=str(build_dir / "static")), name="static")
-    
-    # Catch-all route to serve the React app or static files in the build root
+
     @app.get("/{full_path:path}")
     async def serve_react_app(full_path: str):
+        if full_path.startswith("api/"):
+            raise HTTPException(status_code=404, detail="Not Found")
         file_path = build_dir / full_path
-        # Return exact file if it exists (e.g., manifest.json, favicon.ico, logos)
         if file_path.is_file():
             return FileResponse(str(file_path))
-        # Otherwise, let React Router handle it via index.html
         return FileResponse(str(build_dir / "index.html"))
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        reload=False,
+        log_level="info"
+    )
+

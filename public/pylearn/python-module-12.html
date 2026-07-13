@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PyLearn — Module 12: Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/skulpt/1.2.0/skulpt-stdlib.js"></script>
+<style>
+:root{
+  --bg:#ffffff;
+  --bg-2:#f7f8fa;
+  --panel:#f2f3f6;
+  --card:#ffffff;
+  --border:#e2e5ec;
+  --border-soft:#ebedf2;
+  --text:#1b2130;
+  --text-2:#3c4456;
+  --muted:#6b7385;
+  --muted-2:#8a90a1;
+  --navy:#1d3557;
+  --plum:#83374e;
+  --crimson:#e53e4e;
+  --accent:#e53e4e;
+  --accent-2:#e53e4e;
+  --amber:#c97a12;
+  --green:#1f8f5f;
+  --info:#3563b0;
+  --kw:#3355c8;
+  --str:#1f8f5f;
+  --num:#b5610a;
+  --com:#7c8494;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:'IBM Plex Sans',-apple-system,system-ui,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#d3d7e0;border-radius:6px}
+::-webkit-scrollbar-thumb:hover{background:#bcc1cc}
+::-webkit-scrollbar-track{background:transparent}
+
+/* ───────── TOP BAR ───────── */
+.topbar{
+  height:64px;flex:0 0 64px;
+  display:flex;align-items:center;gap:18px;
+  padding:0 22px;
+  background:linear-gradient(90deg,var(--navy) 0%,var(--plum) 55%,var(--crimson) 100%);
+  border-bottom:1px solid rgba(0,0,0,.22);
+  z-index:10;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.logo-pill{
+  background:#fff;border-radius:999px;
+  padding:6px 14px 7px;
+  display:flex;align-items:center;line-height:1;
+  font-weight:800;font-size:15px;letter-spacing:-.2px;
+  box-shadow:0 2px 8px rgba(0,0,0,.18);
+}
+.logo-cadet{color:var(--navy)}
+.logo-x{color:var(--crimson)}
+.brand-name{font-weight:700;font-size:16px;letter-spacing:.2px;color:#fff}
+.brand-sub{color:rgba(255,255,255,.72);font-size:13px}
+.pill{
+  font-size:11.5px;font-weight:600;letter-spacing:.4px;
+  padding:5px 11px;border-radius:20px;white-space:nowrap;
+}
+.pill-part{
+  background:rgba(255,255,255,.16);
+  color:#fff;border:1px solid rgba(255,255,255,.3);
+}
+.pill-py{
+  margin-left:auto;
+  background:rgba(255,255,255,.14);
+  color:#fff;border:1px solid rgba(255,255,255,.32);
+}
+
+/* ───────── LAYOUT ───────── */
+.layout{flex:1;display:flex;min-height:0}
+
+/* ───────── SIDEBAR ───────── */
+.sidebar{
+  width:300px;flex:0 0 300px;
+  background:var(--bg-2);
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+  padding:14px 12px 40px;
+}
+.search{
+  position:relative;margin:4px 4px 16px;
+}
+.search input{
+  width:100%;
+  background:var(--panel);
+  border:1px solid var(--border);
+  border-radius:9px;
+  color:var(--text);
+  font-family:inherit;font-size:13px;
+  padding:9px 12px 9px 34px;
+  outline:none;
+}
+.search input::placeholder{color:var(--muted-2)}
+.search input:focus{border-color:var(--accent-2);box-shadow:0 0 0 3px rgba(229,62,78,.15)}
+.search svg{
+  position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  width:15px;height:15px;stroke:var(--muted);fill:none;
+}
+.nav-section{margin-bottom:6px}
+.nav-label{
+  font-size:11px;font-weight:600;letter-spacing:.6px;
+  color:var(--muted-2);text-transform:uppercase;
+  padding:14px 12px 8px;
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:8px;
+  font-size:13.5px;color:var(--muted);
+  cursor:pointer;user-select:none;
+  border-left:2px solid transparent;
+  margin-left:6px;
+}
+.nav-item:hover{color:var(--text-2);background:rgba(20,25,40,.035)}
+.nav-item .dot{
+  width:6px;height:6px;border-radius:50%;
+  background:#c3c8d3;flex:0 0 6px;
+}
+.nav-item.active{
+  color:var(--accent);font-weight:600;
+  background:rgba(229,62,78,.10);
+  border-left-color:var(--accent);
+}
+.nav-item.active .dot{background:var(--accent);box-shadow:0 0 8px var(--accent)}
+.nav-item.task{color:var(--text-2);font-weight:600}
+.nav-item.task .dot{background:var(--amber);box-shadow:0 0 7px rgba(240,169,59,.5)}
+.nav-item.task.active{background:rgba(240,169,59,.10);border-left-color:var(--amber);color:var(--amber)}
+.nav-item .count{
+  margin-left:auto;font-size:11px;font-weight:600;
+  color:var(--muted);background:var(--panel);
+  border:1px solid var(--border);border-radius:10px;
+  padding:1px 8px;
+}
+.nav-item.locked{opacity:.42;cursor:not-allowed}
+.nav-item.locked:hover{background:transparent;color:var(--muted)}
+.nav-item .file-ic{font-size:13px;opacity:.85}
+.sec-divider{height:1px;background:var(--border-soft);margin:8px 12px}
+
+/* ───────── CONTENT ───────── */
+.content-wrap{flex:1;overflow-y:auto;min-width:0}
+.content{max-width:860px;margin:0 auto;padding:26px 40px 90px}
+.crumb-row{display:flex;align-items:flex-start;gap:16px}
+.crumb-row .titles{flex:1;min-width:0}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:4px}
+h1.lesson-title{font-size:30px;font-weight:700;margin:0 0 4px;letter-spacing:-.3px;color:#12151f}
+.arrows{display:flex;gap:8px;padding-top:4px}
+.arrow-btn{
+  width:38px;height:34px;border-radius:8px;
+  background:var(--panel);border:1px solid var(--border);
+  color:var(--text-2);font-size:16px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+}
+.arrow-btn:hover{background:#eceef2;border-color:#cfd4de;color:#12151f}
+.arrow-btn:disabled{opacity:.35;cursor:not-allowed}
+
+/* tabs */
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--border);margin:22px 0 24px}
+.tab{
+  display:flex;align-items:center;gap:7px;
+  padding:11px 4px;margin:0 14px -1px 0;
+  font-size:14px;font-weight:500;color:var(--muted);
+  cursor:pointer;border-bottom:2px solid transparent;
+}
+.tab:first-child{margin-left:0}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab:hover:not(.active){color:var(--text-2)}
+
+/* lesson prose */
+.prose h2{font-size:23px;font-weight:700;margin:34px 0 12px;color:#12151f;letter-spacing:-.2px}
+.prose h2:first-child{margin-top:0}
+.prose h3{font-size:16.5px;font-weight:600;margin:26px 0 10px;color:#1e2433}
+.prose p{font-size:15px;line-height:1.72;color:var(--text-2);margin:0 0 14px}
+.prose strong{color:#12151f;font-weight:600}
+.prose em{color:#2d3446}
+.prose code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:#eef1fb;color:#2c4bb0;
+  padding:2px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.prose pre.code{
+  background:#11162a;border:1px solid #1c2340;
+  border-radius:11px;padding:16px 18px;overflow-x:auto;
+  margin:6px 0 18px;line-height:1.6;
+}
+.prose pre.code code{
+  background:none;border:none;padding:0;color:#dce3f1;
+  font-size:13.5px;display:block;
+}
+.prose pre.out{
+  background:#0d1120;border:1px solid #1c2340;
+  border-radius:9px;padding:12px 16px;margin:-8px 0 18px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:#aeb6c9;line-height:1.55;white-space:pre-wrap;
+}
+.prose pre.out::before{
+  content:"output";display:block;font-size:10px;letter-spacing:.5px;
+  text-transform:uppercase;color:#6b7385;margin-bottom:6px;
+}
+/* syntax tokens */
+.code .k{color:var(--kw)}
+.code .s{color:var(--str)}
+.code .n{color:var(--num)}
+.code .c{color:var(--com);font-style:italic}
+
+/* tables */
+.prose table{
+  width:100%;border-collapse:collapse;margin:8px 0 22px;
+  font-size:13.5px;border:1px solid var(--border);border-radius:10px;overflow:hidden;
+}
+.prose th{
+  background:#eef0f4;color:#1e2433;font-weight:600;text-align:left;
+  padding:10px 14px;border-bottom:1px solid var(--border);font-size:12.5px;
+}
+.prose td{padding:10px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+.prose tr:last-child td{border-bottom:none}
+.prose td:first-child,.prose th:first-child{border-right:1px solid var(--border-soft)}
+
+/* callouts */
+.callout{
+  border-radius:10px;padding:13px 16px;margin:6px 0 20px;
+  font-size:14px;line-height:1.62;border:1px solid;
+}
+.callout .lbl{font-weight:700;font-size:12px;letter-spacing:.3px;text-transform:uppercase;display:block;margin-bottom:4px}
+.callout p{margin:0;font-size:14px;color:var(--text-2)}
+.callout.warn{background:rgba(201,122,18,.08);border-color:rgba(201,122,18,.32)}
+.callout.warn .lbl{color:#a8620d}
+.callout.tip{background:rgba(31,143,95,.08);border-color:rgba(31,143,95,.3)}
+.callout.tip .lbl{color:#187a51}
+.callout.note{background:rgba(53,99,176,.08);border-color:rgba(53,99,176,.3)}
+.callout.note .lbl{color:#2c5296}
+
+/* ───────── IDE ───────── */
+.ide{display:none;flex-direction:column;gap:14px}
+.ide.show{display:flex}
+.editor-shell{
+  background:#11162a;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.editor-bar{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 12px;border-bottom:1px solid #1c2340;background:#0d1122;
+}
+.editor-bar .fname{font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#8a90a1}
+.editor-bar .dots{display:flex;gap:6px;margin-right:4px}
+.editor-bar .dots i{width:11px;height:11px;border-radius:50%;display:inline-block}
+.dots i:nth-child(1){background:#ff5f56}.dots i:nth-child(2){background:#ffbd2e}.dots i:nth-child(3){background:#27c93f}
+.editor-body{display:flex;font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.6}
+.gutter{
+  padding:14px 10px 14px 14px;text-align:right;color:#4b5578;
+  background:#0d1122;user-select:none;white-space:pre;border-right:1px solid #1c2340;
+}
+#editor{
+  flex:1;border:none;outline:none;resize:vertical;
+  background:transparent;color:#e3e9f5;
+  font-family:inherit;font-size:13.5px;line-height:1.6;
+  padding:14px 16px;min-height:200px;tab-size:4;
+}
+.ide-actions{display:flex;gap:10px;align-items:center}
+.btn{
+  font-family:inherit;font-size:13.5px;font-weight:600;
+  padding:9px 18px;border-radius:8px;cursor:pointer;border:1px solid transparent;
+  display:flex;align-items:center;gap:7px;
+}
+.btn-run{background:var(--accent-2);color:#fff;box-shadow:0 2px 12px rgba(229,62,78,.35)}
+.btn-run:hover{background:#d63a49}
+.btn-reset{background:var(--panel);color:var(--text-2);border-color:var(--border)}
+.btn-reset:hover{background:var(--card);border-color:#cfd4de}
+.console{
+  background:#0d1122;border:1px solid #1c2340;border-radius:11px;overflow:hidden;
+}
+.console-bar{
+  padding:8px 14px;border-bottom:1px solid #1c2340;
+  font-size:11px;letter-spacing:.5px;text-transform:uppercase;color:#8a90a1;
+  display:flex;align-items:center;gap:8px;
+}
+.console-bar .live{width:7px;height:7px;border-radius:50%;background:var(--green)}
+.console-body{
+  padding:14px 16px;min-height:64px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.6;white-space:pre-wrap;
+}
+.out-ok{color:#dbe1ee}
+.out-err{color:#ff8a82}
+.out-hint{color:#8a90a1}
+
+/* ───────── TASKS ───────── */
+.tasks-intro{font-size:15px;color:var(--text-2);line-height:1.7;margin:0 0 22px}
+.task{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:11px;padding:16px 18px;margin-bottom:14px;
+  box-shadow:0 1px 3px rgba(20,25,40,.04);
+}
+.task-head{display:flex;gap:13px;align-items:flex-start}
+.task-num{
+  flex:0 0 26px;height:26px;border-radius:7px;
+  background:rgba(201,122,18,.14);color:#a8620d;
+  font-weight:700;font-size:13px;
+  display:flex;align-items:center;justify-content:center;
+}
+.task-text{font-size:14.5px;line-height:1.65;color:var(--text-2)}
+.task-text code{
+  font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  background:#eef1fb;color:#2c4bb0;padding:1px 6px;border-radius:5px;border:1px solid #dbe1f5;
+}
+.task details{margin-top:13px}
+.task summary{
+  list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-size:12.5px;font-weight:600;color:var(--accent);
+  background:rgba(229,62,78,.10);border:1px solid rgba(229,62,78,.28);
+  padding:6px 13px;border-radius:7px;user-select:none;
+}
+.task summary::-webkit-details-marker{display:none}
+.task summary:hover{background:rgba(229,62,78,.16)}
+.task summary .chev{transition:transform .2s}
+.task details[open] summary .chev{transform:rotate(90deg)}
+.task-sol{margin-top:12px}
+.task-sol pre.code{margin:0 0 10px}
+.sol-note{font-size:13.5px;color:var(--muted);line-height:1.6}
+
+@media (max-width:880px){
+  .sidebar{display:none}
+  .content{padding:22px 18px 80px}
+  .pill-part{display:none}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <img src="/logo.jpg" alt="SSIS Logo" style="height:24px; border-radius:4px; margin-right:8px;" />
+    <span class="brand-name">PyLearn</span>
+    <span class="brand-sub">Complete Python Guide</span>
+  </div>
+  <span class="pill pill-part">PART 4 / 4 — Mastery</span>
+  <span class="pill pill-py">Python 3.x</span>
+</header>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="search">
+      <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg>
+      <input id="search" type="text" placeholder="Search lessons...">
+    </div>
+    <nav id="nav"></nav>
+  </aside>
+
+  <main class="content-wrap">
+    <div class="content">
+      <div class="crumb-row">
+        <div class="titles">
+          <div class="crumb" id="crumb"></div>
+          <h1 class="lesson-title" id="title"></h1>
+        </div>
+        <div class="arrows">
+          <button class="arrow-btn" id="prev" title="Previous">&larr;</button>
+          <button class="arrow-btn" id="next" title="Next">&rarr;</button>
+        </div>
+      </div>
+
+      <div class="tabs">
+        <div class="tab active" id="tab-lesson" data-tab="lesson"><span>📖</span> Lesson</div>
+        <div class="tab" id="tab-ide" data-tab="ide"><span>💻</span> Try it yourself</div>
+      </div>
+
+      <div class="prose" id="lesson-view"></div>
+
+      <div class="ide" id="ide-view">
+        <div class="editor-shell">
+          <div class="editor-bar">
+            <span class="dots"><i></i><i></i><i></i></span>
+            <span class="fname">main.py</span>
+          </div>
+          <div class="editor-body">
+            <div class="gutter" id="gutter">1</div>
+            <textarea id="editor" spellcheck="false"></textarea>
+          </div>
+        </div>
+        <div class="ide-actions">
+          <button class="btn btn-run" id="run">▶ Run code</button>
+          <button class="btn btn-reset" id="reset">↺ Reset</button>
+        </div>
+        <div class="console">
+          <div class="console-bar"><span class="live"></span> Output</div>
+          <div class="console-body" id="output"><span class="out-hint">▸ Click "Run code" to see the result.</span></div>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════════════════════ CONTENT ════════════════════ */
+const LESSONS = [
+{
+  title:"Number Guessing Game",
+  starter:'# A version that plays itself using binary search\nimport random\n\nsecret = random.randint(1, 100)\nlow = 1\nhigh = 100\nattempts = 0\n\nwhile True:\n    guess = (low + high) // 2      # guess the middle of what is left\n    attempts += 1\n    if guess == secret:\n        print(f"Found {secret} in {attempts} guesses")\n        break\n    elif guess < secret:\n        low = guess + 1\n    else:\n        high = guess - 1\n',
+  html:`
+<p>Time to build. Over the next four projects you will combine everything from the course — variables, loops, functions, data structures and classes — into complete little programs. We start with a classic: a number guessing game.</p>
+
+<h2>The interactive version</h2>
+<p>In a real terminal, the game picks a secret number and asks the player to guess, giving "higher" or "lower" hints until they get it. That uses <code>input()</code> to read what the player types.</p>
+<pre class="code">import random
+
+secret = random.randint(1, 100)
+
+while True:
+    guess = int(input("Your guess: "))   # read the player's guess
+    if guess == secret:
+        print("Correct!")
+        break
+    elif guess &lt; secret:
+        print("Too low")
+    else:
+        print("Too high")</pre>
+<div class="callout note"><span class="lbl">Note</span><p><code>input()</code> always returns text, so the guess must be wrapped in <code>int()</code> to compare it as a number. The loop uses <code>break</code> from Module 4 to stop once the guess is right.</p></div>
+
+<h2>A version that runs here: the auto-guesser</h2>
+<p>The interactive version needs a keyboard, so it will not run in the panel on the right. Here is a version that plays itself, using a clever strategy: always guess the middle of the remaining range. This is called a <strong>binary search</strong>, and it finds any number from 1 to 100 in at most seven guesses.</p>
+<pre class="code">import random
+
+secret = random.randint(1, 100)
+low = 1
+high = 100
+attempts = 0
+
+while True:
+    guess = (low + high) // 2      # the middle of what is left
+    attempts += 1
+    if guess == secret:
+        print(f"Found {secret} in {attempts} guesses")
+        break
+    elif guess &lt; secret:
+        low = guess + 1            # secret is higher — raise the floor
+    else:
+        high = guess - 1          # secret is lower — lower the ceiling</pre>
+<div class="callout tip"><span class="lbl">Tip</span><p>Guessing the middle each time halves the possibilities with every attempt. Halving 100 numbers reaches a single answer in about seven steps — far faster than guessing one by one.</p></div>
+`
+},
+{
+  title:"To-Do List App",
+  starter:'# Tasks live in one list; each action is a function\ntasks = []\n\ndef add_task(task):\n    tasks.append(task)\n    print(f"Added: {task}")\n\ndef remove_task(task):\n    if task in tasks:\n        tasks.remove(task)\n        print(f"Removed: {task}")\n\ndef show_tasks():\n    for index, task in enumerate(tasks, start=1):\n        print(f"{index}. {task}")\n\nadd_task("Write CV")\nadd_task("Practise Python")\nadd_task("Apply to CadetX")\nremove_task("Write CV")\nshow_tasks()\n',
+  html:`
+<p>Next, a to-do list. This project is really about organising data with a list and giving each action its own function — the tidy way to structure any small app.</p>
+
+<h2>Storing and changing tasks</h2>
+<p>The tasks live in a single list. Each action — adding, removing, showing — becomes a function that works on that list.</p>
+<pre class="code">tasks = []
+
+def add_task(task):
+    tasks.append(task)
+    print(f"Added: {task}")
+
+def remove_task(task):
+    if task in tasks:
+        tasks.remove(task)
+        print(f"Removed: {task}")
+    else:
+        print(f"{task} is not on the list")
+
+def show_tasks():
+    if not tasks:
+        print("No tasks yet")
+        return
+    for index, task in enumerate(tasks, start=1):
+        print(f"{index}. {task}")</pre>
+
+<h2>Using the functions</h2>
+<pre class="code">add_task("Write CV")
+add_task("Practise Python")
+add_task("Apply to CadetX")
+remove_task("Write CV")
+show_tasks()
+# Added: Write CV
+# Added: Practise Python
+# Added: Apply to CadetX
+# Removed: Write CV
+# 1. Practise Python
+# 2. Apply to CadetX</pre>
+<div class="callout note"><span class="lbl">Note</span><p><code>enumerate(tasks, start=1)</code> numbers the list from 1 instead of 0, which reads more naturally for a person. The <code>if not tasks:</code> check uses the truthiness of an empty list from Module 2 — an empty list is falsy.</p></div>
+
+<h2>The interactive menu</h2>
+<p>In a terminal you would wrap these in a loop that reads a choice with <code>input()</code>, letting the user add and remove until they quit. The structure is the same; only the source of the commands changes.</p>
+<pre class="code">while True:
+    choice = input("add / remove / show / quit: ")
+    if choice == "quit":
+        break
+    elif choice == "show":
+        show_tasks()
+    # ...and so on for add and remove</pre>
+`
+},
+{
+  title:"Data Summariser",
+  starter:'# Turn a list of numbers into a readable summary\nscores = [88, 92, 79, 95, 68]\n\ncount = len(scores)\ntotal = sum(scores)\naverage = total / count\nhighest = max(scores)\nlowest = min(scores)\n\nprint(f"Count:   {count}")\nprint(f"Total:   {total}")\nprint(f"Average: {average:.1f}")\nprint(f"Highest: {highest}")\nprint(f"Lowest:  {lowest}")\n',
+  html:`
+<p>This project takes a collection of numbers and reports the key facts about them — count, total, average, highest and lowest. It is a small taste of what data analysis is: turning raw numbers into a summary a person can read.</p>
+
+<h2>Summarising a list of numbers</h2>
+<pre class="code">scores = [88, 92, 79, 95, 68]
+
+count = len(scores)
+total = sum(scores)
+average = total / count
+highest = max(scores)
+lowest = min(scores)
+
+print(f"Count:   {count}")
+print(f"Total:   {total}")
+print(f"Average: {average:.1f}")
+print(f"Highest: {highest}")
+print(f"Lowest:  {lowest}")
+# Count:   5
+# Total:   422
+# Average: 84.4
+# Highest: 95
+# Lowest:  68</pre>
+<p>Python's built-in <code>sum</code>, <code>max</code>, <code>min</code> and <code>len</code> do the heavy lifting. The <code>:.1f</code> in the f-string rounds the average to one decimal place.</p>
+
+<h2>Wrapping it in a safe function</h2>
+<p>A summary is more reusable as a function that returns the results. Guard against an empty list, which would cause a division-by-zero when computing the average.</p>
+<pre class="code">def summarise(numbers):
+    if not numbers:
+        return {"count": 0, "average": 0}    # guard the empty case
+    return {
+        "count": len(numbers),
+        "total": sum(numbers),
+        "average": sum(numbers) / len(numbers),
+        "highest": max(numbers),
+        "lowest": min(numbers),
+    }
+
+report = summarise([10, 20, 30])
+print(report["average"])   # 20.0
+print(summarise([]))       # {'count': 0, 'average': 0}</pre>
+<div class="callout warn"><span class="lbl">Common mistake</span><p>Computing an average without checking for an empty list. <code>sum([]) / len([])</code> divides by zero and crashes. The <code>if not numbers:</code> guard returns a safe result instead — the kind of defensive check real programs need.</p></div>
+`
+},
+{
+  title:"Putting It Together",
+  starter:'# Class + list + functions + f-strings, all working together\nclass Student:\n    def __init__(self, name, score):\n        self.name = name\n        self.score = score\n\n    def __str__(self):\n        return f"{self.name}: {self.score}"\n\nstudents = [\n    Student("Alex", 88),\n    Student("Sam", 92),\n    Student("Jo", 79),\n]\n\ndef average_score(group):\n    return sum(s.score for s in group) / len(group)\n\ndef top_student(group):\n    return max(group, key=lambda s: s.score)\n\nfor student in students:\n    print(student)\n\nprint(f"Average: {average_score(students):.1f}")\nprint(f"Top scorer: {top_student(students)}")\n',
+  html:`
+<p>For the final project, we combine the biggest ideas of the course: a class to model each item, a list to hold many of them, functions to analyse the group, and f-strings to present the result. This is how real programs are built — small pieces working together.</p>
+
+<h2>A class for each student</h2>
+<pre class="code">class Student:
+    def __init__(self, name, score):
+        self.name = name
+        self.score = score
+
+    def __str__(self):
+        return f"{self.name}: {self.score}"</pre>
+
+<h2>A group of students</h2>
+<p>We keep the students in a list, then write functions that work across the whole group.</p>
+<pre class="code">students = [
+    Student("Alex", 88),
+    Student("Sam", 92),
+    Student("Jo", 79),
+]
+
+def average_score(group):
+    return sum(s.score for s in group) / len(group)
+
+def top_student(group):
+    return max(group, key=lambda s: s.score)
+
+for student in students:
+    print(student)                       # uses __str__
+
+print(f"Average: {average_score(students):.1f}")
+print(f"Top scorer: {top_student(students)}")
+# Alex: 88
+# Sam: 92
+# Jo: 79
+# Average: 86.3
+# Top scorer: Sam: 92</pre>
+<div class="callout note"><span class="lbl">Note</span><p>Look how many modules meet here: a class with <code>__str__</code> (Modules 7–8), a list of objects (Module 6), a generator expression inside <code>sum</code> and a <code>lambda</code> key for <code>max</code> (Modules 5 and 11), a <code>for</code> loop (Module 4) and f-strings (Module 2). That is the whole course in one small program.</p></div>
+<div class="callout tip"><span class="lbl">Tip</span><p>Every large program is just small, understood pieces combined like this. When a project feels big, break it into a class for the data, a few functions for the behaviour, and a loop to tie them together — exactly what you have practised throughout.</p></div>
+`
+}
+];
+
+const TASKS = [
+ {p:'Given <code>secret = 42</code> and the guesses <code>[30, 50, 42]</code>, loop through the guesses printing whether each is too low, too high or correct, stopping when correct.',
+  c:'secret = 42\nguesses = [30, 50, 42]\nfor guess in guesses:\n    if guess == secret:\n        print(f"{guess} is correct!")\n        break\n    elif guess < secret:\n        print(f"{guess} is too low")\n    else:\n        print(f"{guess} is too high")\n# 30 is too low\n# 50 is too high\n# 42 is correct!',
+  e:'The loop compares each guess to the secret and stops with <code>break</code> once the correct one is found.'},
+ {p:'Use binary search to find <code>secret = 73</code> within 1 to 100, printing how many attempts it took.',
+  c:'secret = 73\nlow, high = 1, 100\nattempts = 0\nwhile True:\n    guess = (low + high) // 2\n    attempts += 1\n    if guess == secret:\n        print(f"Found in {attempts} attempts")\n        break\n    elif guess < secret:\n        low = guess + 1\n    else:\n        high = guess - 1',
+  e:'Guessing the middle each time halves the range, so the secret is found in only a handful of attempts.'},
+ {p:'Build a small to-do list: write <code>add_task</code> and <code>show_tasks</code> functions over a shared list, add two tasks, and show them numbered from 1.',
+  c:'tasks = []\n\ndef add_task(task):\n    tasks.append(task)\n\ndef show_tasks():\n    for index, task in enumerate(tasks, start=1):\n        print(f"{index}. {task}")\n\nadd_task("Practise Python")\nadd_task("Apply to CadetX")\nshow_tasks()\n# 1. Practise Python\n# 2. Apply to CadetX',
+  e:'Each function works on the shared tasks list, and <code>enumerate</code> numbers the output from 1.'},
+ {p:'Given <code>tasks = ["CV", "Portfolio", "Interview prep"]</code>, print how many tasks are left using an f-string.',
+  c:'tasks = ["CV", "Portfolio", "Interview prep"]\nprint(f"You have {len(tasks)} tasks left")   # You have 3 tasks left',
+  e:'<code>len()</code> reports how many items the list holds.'},
+ {p:'Given <code>scores = [88, 92, 79, 95, 68]</code>, print the average rounded to one decimal place.',
+  c:'scores = [88, 92, 79, 95, 68]\naverage = sum(scores) / len(scores)\nprint(f"Average: {average:.1f}")   # Average: 84.4',
+  e:'Dividing the total by the count gives the mean, and <code>:.1f</code> rounds it to one decimal place.'},
+ {p:'For the same scores, print the highest and lowest values using <code>max</code> and <code>min</code>.',
+  c:'scores = [88, 92, 79, 95, 68]\nprint(f"Highest: {max(scores)}")   # 95\nprint(f"Lowest: {min(scores)}")    # 68',
+  e:'The built-in <code>max</code> and <code>min</code> find the largest and smallest values in the list.'},
+ {p:'Write a function <code>average(numbers)</code> that returns 0 for an empty list and the mean otherwise. Test it on <code>[10, 20, 30]</code> and on <code>[]</code>.',
+  c:'def average(numbers):\n    if not numbers:\n        return 0\n    return sum(numbers) / len(numbers)\n\nprint(average([10, 20, 30]))   # 20.0\nprint(average([]))             # 0',
+  e:'The guard returns 0 for an empty list, avoiding a division-by-zero crash.'},
+ {p:'Count the words in the sentence <code>"learn python with cadetx"</code> using <code>.split()</code> and <code>len()</code>.',
+  c:'sentence = "learn python with cadetx"\nwords = sentence.split()\nprint(len(words))   # 4',
+  e:'<code>.split()</code> breaks the sentence into a list of words, and <code>len()</code> counts them.'},
+ {p:'Count how many times each letter appears in <code>"banana"</code> using a dictionary and <code>.get()</code>.',
+  c:'text = "banana"\ncounts = {}\nfor letter in text:\n    counts[letter] = counts.get(letter, 0) + 1\nprint(counts)   # {\'b\': 1, \'a\': 3, \'n\': 2}',
+  e:'<code>.get(letter, 0)</code> starts each new letter at zero, and the count grows each time the letter appears.'},
+ {p:'Define a <code>Student</code> class with a <code>name</code>, a <code>score</code> and a <code>__str__</code>, then print a student object directly.',
+  c:'class Student:\n    def __init__(self, name, score):\n        self.name = name\n        self.score = score\n\n    def __str__(self):\n        return f"{self.name}: {self.score}"\n\nprint(Student("Alex", 88))   # Alex: 88',
+  e:'<code>__str__</code> controls how the student prints, showing the name and score together.'},
+ {p:'Given a list of three <code>Student</code> objects, compute and print the average of their scores to one decimal place.',
+  c:'class Student:\n    def __init__(self, name, score):\n        self.name = name\n        self.score = score\n\nstudents = [Student("Alex", 88), Student("Sam", 92), Student("Jo", 79)]\naverage = sum(s.score for s in students) / len(students)\nprint(f"{average:.1f}")   # 86.3',
+  e:'A generator expression pulls each score out of the objects, and dividing by the count gives the class average.'},
+ {p:'From the same list of students, find and print the top scorer using <code>max</code> with a <code>lambda</code> key.',
+  c:'class Student:\n    def __init__(self, name, score):\n        self.name = name\n        self.score = score\n\nstudents = [Student("Alex", 88), Student("Sam", 92), Student("Jo", 79)]\ntop = max(students, key=lambda s: s.score)\nprint(f"Top: {top.name} ({top.score})")   # Top: Sam (92)',
+  e:'<code>max</code> with a <code>key</code> lambda compares students by their score and returns the highest.'}
+];
+
+const NAV = [
+ {label:"10. Modules & Standard Library", locked:true, items:[
+   {label:"Importing Modules"},{label:"The Standard Library"},{label:"Writing Your Own Modules"},{label:"Packages & pip"},
+   {type:"tasks", label:"Module 10 Tasks", count:12}
+ ]},
+ {label:"11. Advanced Python", locked:true, items:[
+   {label:"Comprehensions in Depth"},{label:"Iterators & Generators"},{label:"Decorators"},{label:"Type Hints"},
+   {type:"tasks", label:"Module 11 Tasks", count:12}
+ ]},
+ {label:"12. Projects", items:[
+   {type:"lesson", i:0, label:"Number Guessing Game"},
+   {type:"lesson", i:1, label:"To-Do List App"},
+   {type:"lesson", i:2, label:"Data Summariser"},
+   {type:"lesson", i:3, label:"Putting It Together"},
+   {type:"tasks", label:"Module 12 Tasks", count:12}
+ ]}
+];
+
+/* ════════════════════ SYNTAX HIGHLIGHTER ════════════════════ */
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function highlight(code){
+  code = esc(code);
+  const store=[];
+  code = code.replace(/#[^\n]*/g, m=>{store.push('<span class="c">'+m+'</span>');return '\u0000';});
+  code = code.replace(/("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, m=>{store.push('<span class="s">'+m+'</span>');return '\u0000';});
+  code = code.replace(/\b\d+\.?\d*\b/g, '<span class="n">$&</span>');
+  const kw=['def','return','if','elif','else','for','while','in','and','or','not','is','print','True','False','None','import','from','as','class','with','break','continue','pass','lambda','input','range','len','str','int','float'];
+  code = code.replace(new RegExp('\\b('+kw.join('|')+')\\b','g'), '<span class="k">$1</span>');
+  let k=0; code = code.replace(/\u0000/g, ()=>store[k++]);
+  return code;
+}
+
+/* ════════════════════ STATE + RENDER ════════════════════ */
+const flat=[{type:"lesson",i:0},{type:"lesson",i:1},{type:"lesson",i:2},{type:"lesson",i:3},{type:"tasks"}];
+let cur=0, tab='lesson';
+
+function buildNav(filter=""){
+  const f=filter.trim().toLowerCase();
+  const nav=document.getElementById('nav'); nav.innerHTML='';
+  NAV.forEach(sec=>{
+    const wrap=document.createElement('div'); wrap.className='nav-section';
+    const lbl=document.createElement('div'); lbl.className='nav-label'; lbl.textContent=sec.label; wrap.appendChild(lbl);
+    let shown=0;
+    sec.items.forEach(it=>{
+      if(f && !it.label.toLowerCase().includes(f)) return;
+      shown++;
+      const el=document.createElement('div');
+      el.className='nav-item'+(it.type==='tasks'?' task':'')+(sec.locked?' locked':'');
+      const isActive = !sec.locked && ((it.type==='lesson'&&flat[cur].type==='lesson'&&flat[cur].i===it.i)||(it.type==='tasks'&&flat[cur].type==='tasks'));
+      if(isActive) el.classList.add('active');
+      let inner = it.type==='tasks'
+        ? '<span class="file-ic">📄</span>'+it.label+'<span class="count">'+it.count+'</span>'
+        : '<span class="dot"></span>'+it.label;
+      if(sec.locked) inner += '<span class="count" style="margin-left:auto">🔒</span>';
+      el.innerHTML=inner;
+      if(!sec.locked){
+        el.onclick=()=>{
+          cur = it.type==='tasks' ? flat.length-1 : it.i;
+          tab='lesson'; render();
+        };
+      } else { el.title='Available in the full Part 1 build'; }
+      wrap.appendChild(el);
+    });
+    if(shown>0) nav.appendChild(wrap);
+  });
+}
+
+function render(){
+  const item=flat[cur];
+  const lessonView=document.getElementById('lesson-view');
+  const ideView=document.getElementById('ide-view');
+
+  if(item.type==='lesson'){
+    const L=LESSONS[item.i];
+    document.getElementById('crumb').textContent='12. Projects';
+    document.getElementById('title').textContent=L.title;
+    lessonView.innerHTML=L.html;
+    document.getElementById('editor').value=L.starter;
+    document.getElementById('tab-ide').style.display='';
+  } else {
+    document.getElementById('crumb').textContent='12. Projects';
+    document.getElementById('title').textContent='Module 1 Tasks';
+    lessonView.innerHTML=renderTasks();
+    document.getElementById('editor').value='# Use this editor to solve any task above.\n# Type your code, then press Run code.\n\n';
+    document.getElementById('tab-ide').style.display='';
+  }
+
+  // highlight static lesson code blocks
+  lessonView.querySelectorAll('pre.code').forEach(pre=>{ pre.innerHTML='<code>'+highlight(pre.textContent)+'</code>'; });
+
+  // tabs
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  lessonView.style.display = tab==='lesson' ? 'block' : 'none';
+  ideView.classList.toggle('show', tab==='ide');
+  updateGutter();
+
+  // arrows
+  document.getElementById('prev').disabled = cur===0;
+  document.getElementById('next').disabled = cur===flat.length-1;
+
+  buildNav(document.getElementById('search').value);
+  document.querySelector('.content-wrap').scrollTop=0;
+}
+
+function renderTasks(){
+  let h='<p class="tasks-intro">Work through these in order — they start very simple and build up. Try each one in the <strong>Try it yourself</strong> tab before revealing the solution.</p>';
+  TASKS.forEach((t,idx)=>{
+    h+='<div class="task"><div class="task-head"><div class="task-num">'+(idx+1)+'</div><div class="task-text">'+t.p+'</div></div>'+
+       '<details><summary><span class="chev">▸</span> Show solution</summary><div class="task-sol">'+
+       '<pre class="code"><code>'+highlight(t.c)+'</code></pre><div class="sol-note">'+t.e+'</div></div></details></div>';
+  });
+  return h;
+}
+
+/* ════════════════════ EDITOR ════════════════════ */
+function updateGutter(){
+  const ed=document.getElementById('editor');
+  const lines=ed.value.split('\n').length;
+  let g=''; for(let i=1;i<=lines;i++) g+=i+'\n';
+  document.getElementById('gutter').textContent=g.trim();
+}
+const editor=document.getElementById('editor');
+editor.addEventListener('input',updateGutter);
+editor.addEventListener('scroll',()=>{document.getElementById('gutter').scrollTop=editor.scrollTop;});
+editor.addEventListener('keydown',e=>{
+  if(e.key==='Tab'){
+    e.preventDefault();
+    const s=editor.selectionStart,en=editor.selectionEnd;
+    editor.value=editor.value.slice(0,s)+'    '+editor.value.slice(en);
+    editor.selectionStart=editor.selectionEnd=s+4;
+    updateGutter();
+  }
+});
+
+/* ════════════════════ RUN (Skulpt) ════════════════════ */
+function runCode(){
+  const out=document.getElementById('output');
+  if(typeof Sk==='undefined'){
+    out.innerHTML='<span class="out-hint">▸ The Python engine is still loading. Give it a moment and try again.</span>';
+    return;
+  }
+  const code=document.getElementById('editor').value;
+  out.innerHTML=''; let buf='';
+  const write=t=>{buf+=t; out.innerHTML='<span class="out-ok">'+esc(buf)+'</span>'; out.scrollTop=out.scrollHeight;};
+  const readf=x=>{ if(Sk.builtinFiles===undefined||Sk.builtinFiles["files"][x]===undefined) throw "File not found: '"+x+"'"; return Sk.builtinFiles["files"][x]; };
+  Sk.configure({output:write, read:readf, __future__:Sk.python3, execLimit:10000});
+  Sk.misceval.asyncToPromise(()=>Sk.importMainWithBody("<stdin>",false,code,true))
+    .then(()=>{ if(!buf) out.innerHTML='<span class="out-hint">▸ Program finished with no output.</span>'; },
+          err=>{ out.innerHTML='<span class="out-err">'+esc(err.toString())+'</span>'; });
+}
+document.getElementById('run').onclick=runCode;
+document.getElementById('reset').onclick=()=>{
+  const item=flat[cur];
+  document.getElementById('editor').value = item.type==='lesson' ? LESSONS[item.i].starter : '# Use this editor to solve any task above.\n\n';
+  document.getElementById('output').innerHTML='<span class="out-hint">▸ Code reset.</span>';
+  updateGutter();
+};
+
+/* ════════════════════ WIRING ════════════════════ */
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{ tab=t.dataset.tab; render(); });
+document.getElementById('prev').onclick=()=>{ if(cur>0){cur--;tab='lesson';render();} };
+document.getElementById('next').onclick=()=>{ if(cur<flat.length-1){cur++;tab='lesson';render();} };
+document.getElementById('search').addEventListener('input',e=>buildNav(e.target.value));
+
+buildNav();
+render();
+</script>
+</body>
+</html>

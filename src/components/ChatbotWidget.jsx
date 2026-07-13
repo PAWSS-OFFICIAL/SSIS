@@ -189,8 +189,12 @@ export const ChatbotWidget = () => {
           )}
 
           {/* Messages */}
-          <ScrollArea className="flex-1 h-80 p-4">
-            <div className="space-y-4">
+          <ScrollArea className="flex-1 h-80 p-4 relative">
+            <div 
+              className="absolute inset-0 z-0 opacity-10 pointer-events-none bg-center bg-no-repeat bg-[length:60%]"
+              style={{ backgroundImage: "url('/logo.jpg')" }}
+            />
+            <div className="space-y-4 relative z-10">
               {messages.map((message, idx) => (
                 <div
                   key={idx}

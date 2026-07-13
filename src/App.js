@@ -48,6 +48,7 @@ import { CanteenPage } from "./pages/CanteenPage";
 import { CanteenStaffPortal } from "./pages/CanteenStaffPortal";
 import { PyLearnDashboardPage } from "./pages/PyLearnDashboardPage";
 import { PyLearnModulePage } from "./pages/PyLearnModulePage";
+import { PyLearnCertificatePage } from "./pages/PyLearnCertificatePage";
 import { AdminCanteenOrders } from "./pages/AdminCanteenOrders";
 import { JEEMockAdmin } from "./pages/JEEMockAdmin";
 import { JEEMockStudent } from "./pages/JEEMockStudent";

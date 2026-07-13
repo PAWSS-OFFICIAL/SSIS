@@ -37,3 +37,5 @@ __pycache__/
 # logs
 *.log
 api/*.log
+
+/src/generated/prisma

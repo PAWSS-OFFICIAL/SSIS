@@ -1,0 +1,564 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model announcements {
+  id                Int                     @id @default(autoincrement())
+  title             String                  @db.VarChar(255)
+  content           String?                 @db.Text
+  author_id         Int?
+  target_role       String?                 @default("All") @db.VarChar(50)
+  target_class_id   Int?
+  priority          announcements_priority? @default(Normal)
+  is_active         Boolean?                @default(true)
+  expires_at        DateTime?               @db.Timestamp(0)
+  created_at        DateTime?               @default(now()) @db.Timestamp(0)
+  target_section_id Int?
+  sent_by           Int?
+  sent_at           DateTime?               @default(now()) @db.Timestamp(0)
+}
+
+model attendance {
+  id          Int                @id @default(autoincrement())
+  student_id  Int
+  subject_id  Int?
+  class_id    Int?
+  date        DateTime           @db.Date
+  status      attendance_status? @default(Present)
+  marked_by   Int?
+  remarks     String?            @db.Text
+  created_at  DateTime?          @default(now()) @db.Timestamp(0)
+  course_id   Int?
+  course_name String?            @db.VarChar(255)
+  section_id  Int?
+  records     String?            @db.Text
+}
+
+model badges {
+  id             Int       @id @default(autoincrement())
+  name           String?   @db.VarChar(255)
+  description    String?   @db.Text
+  icon           String?   @db.VarChar(255)
+  criteria_type  String?   @db.VarChar(100)
+  criteria_value String?   @db.VarChar(100)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model challenge_participants {
+  id           Int       @id @default(autoincrement())
+  challenge_id Int?
+  user_id      Int?
+  progress     Int?
+  completed    Boolean?
+  joined_at    DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model challenges {
+  id              Int       @id @default(autoincrement())
+  title           String?   @db.VarChar(255)
+  description     String?   @db.Text
+  challenge_type  String?   @db.VarChar(100)
+  start_date      DateTime? @db.Date
+  end_date        DateTime? @db.Date
+  reward_points   Int?
+  target_criteria String?   @db.VarChar(255)
+  created_by      Int?
+  created_at      DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model class_teachers_new {
+  id          Int       @id @default(autoincrement())
+  class_id    Int
+  section_id  Int       @unique(map: "unique_section_teacher")
+  teacher_id  Int
+  assigned_at DateTime? @default(now()) @db.Timestamp(0)
+  classes     classes   @relation(fields: [class_id, class_id, class_id, class_id, class_id, class_id], references: [id, id, id, id, id, id], onDelete: Cascade, onUpdate: NoAction, map: "fk_1")
+  sections    sections  @relation(fields: [section_id, section_id, section_id], references: [id, id, id], onDelete: Cascade, onUpdate: NoAction, map: "fk_2")
+  users       users     @relation(fields: [teacher_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_3")
+
+  @@index([class_id], map: "fk_1")
+  @@index([teacher_id], map: "fk_3")
+}
+
+model classes {
+  id                 Int                  @id @default(autoincrement())
+  name               String               @db.VarChar(100)
+  grade              String?              @db.VarChar(20)
+  section            String?              @db.VarChar(10)
+  academic_year      String?              @db.VarChar(20)
+  class_teacher_id   Int?
+  created_at         DateTime?            @default(now()) @db.Timestamp(0)
+  sequence_order     Int?                 @default(0)
+  class_teachers_new class_teachers_new[]
+}
+
+model classrooms {
+  id           Int       @id @default(autoincrement())
+  name         String    @db.VarChar(100)
+  building     String?   @db.VarChar(100)
+  floor        Int?
+  capacity     Int?
+  facilities   String?   @db.Text
+  is_available Boolean?  @default(true)
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model classwork {
+  id          Int       @id @default(autoincrement())
+  course_id   Int?
+  department  String?   @db.VarChar(100)
+  year        String?   @db.VarChar(50)
+  type        String?   @db.VarChar(50)
+  title       String?   @db.VarChar(255)
+  description String?   @db.Text
+  due_date    DateTime? @db.Date
+  max_marks   Decimal?  @db.Decimal(5, 2)
+  uploaded_by Int?
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model courses {
+  id          Int       @id @default(autoincrement())
+  name        String    @db.VarChar(255)
+  code        String?   @db.VarChar(50)
+  description String?   @db.Text
+  class_id    Int?
+  teacher_id  Int?
+  credits     Int?      @default(0)
+  is_active   Boolean?  @default(true)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+  section_id  Int?
+  sections    sections? @relation(fields: [section_id, section_id, section_id, section_id, section_id, section_id], references: [id, id, id, id, id, id], onDelete: Cascade, onUpdate: NoAction, map: "fk_1")
+
+  @@index([section_id], map: "fk_1")
+}
+
+model drafts_autosave {
+  id         Int       @id @default(autoincrement())
+  student_id String?   @db.VarChar(255)
+  quiz_id    String?   @db.VarChar(255)
+  draft_data Json?
+  last_saved DateTime? @default(now()) @db.Timestamp(0)
+
+  @@unique([student_id, quiz_id], map: "student_quiz_draft")
+}
+
+model exam_seats {
+  id          Int       @id @default(autoincrement())
+  student_id  Int?
+  exam_id     Int?
+  room_number String?   @db.VarChar(50)
+  seat_number String?   @db.VarChar(50)
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model gamification_points {
+  id         Int       @id @default(autoincrement())
+  user_id    Int?
+  points     Int?
+  reason     String?   @db.VarChar(255)
+  awarded_by Int?
+  awarded_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model grades {
+  id             Int       @id @default(autoincrement())
+  student_id     Int
+  subject_id     Int
+  class_id       Int?
+  exam_type      String?   @db.VarChar(100)
+  marks_obtained Decimal?  @db.Decimal(5, 2)
+  total_marks    Decimal?  @default(100) @db.Decimal(5, 2)
+  grade          String?   @db.VarChar(5)
+  semester       String?   @db.VarChar(20)
+  academic_year  String?   @db.VarChar(20)
+  remarks        String?   @db.Text
+  entered_by     Int?
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+  updated_at     DateTime? @default(now()) @db.Timestamp(0)
+  course_id      Int?
+  course_name    String?   @db.VarChar(255)
+  title          String?   @db.VarChar(255)
+  marks          Decimal?  @db.Decimal(5, 2)
+  max_marks      Decimal?  @db.Decimal(5, 2)
+  date           DateTime? @db.Date
+  graded_by      Int?
+  assignment_id  Int?
+}
+
+model jee_attempts {
+  id                Int                 @id @default(autoincrement())
+  quiz_id           Int
+  student_id        Int
+  status            String?             @default("IN_PROGRESS") @db.VarChar(50)
+  score             Int?                @default(0)
+  started_at        DateTime?           @default(now()) @db.Timestamp(0)
+  submitted_at      DateTime?           @db.Timestamp(0)
+  jee_quizzes       jee_quizzes         @relation(fields: [quiz_id, quiz_id, quiz_id, quiz_id, quiz_id, quiz_id], references: [id, id, id, id, id, id], onDelete: SetNull, onUpdate: NoAction, map: "fk_1")
+  users             users               @relation(fields: [student_id, student_id, student_id], references: [id, id, id], onDelete: Cascade, onUpdate: NoAction, map: "fk_2")
+  jee_proctor_flags jee_proctor_flags[]
+
+  @@index([quiz_id], map: "fk_1")
+  @@index([student_id], map: "fk_2")
+}
+
+model jee_proctor_flags {
+  id              Int          @id @default(autoincrement())
+  attempt_id      Int
+  student_id      Int
+  flag_type       String       @db.VarChar(100)
+  timestamp       DateTime?    @default(now()) @db.Timestamp(0)
+  webcam_snapshot String?      @db.LongText
+  jee_attempts    jee_attempts @relation(fields: [attempt_id, attempt_id, attempt_id, attempt_id, attempt_id, attempt_id], references: [id, id, id, id, id, id], onDelete: Cascade, onUpdate: NoAction, map: "fk_1")
+  users           users        @relation(fields: [student_id, student_id, student_id], references: [id, id, id], onDelete: Cascade, onUpdate: NoAction, map: "fk_2")
+
+  @@index([attempt_id], map: "fk_1")
+  @@index([student_id], map: "fk_2")
+}
+
+model jee_question_banks {
+  id            Int             @id @default(autoincrement())
+  name          String          @db.VarChar(255)
+  created_at    DateTime?       @default(now()) @db.Timestamp(0)
+  jee_questions jee_questions[]
+}
+
+model jee_questions {
+  id                 Int                @id @default(autoincrement())
+  bank_id            Int
+  subject            String             @db.VarChar(20)
+  question_text      String             @db.Text
+  option_a           String             @db.Text
+  option_b           String             @db.Text
+  option_c           String             @db.Text
+  option_d           String             @db.Text
+  correct_answer     String             @db.Text
+  justification      String?            @db.Text
+  created_at         DateTime?          @default(now()) @db.Timestamp(0)
+  jee_question_banks jee_question_banks @relation(fields: [bank_id, bank_id, bank_id, bank_id, bank_id, bank_id], references: [id, id, id, id, id, id], onDelete: Cascade, onUpdate: NoAction, map: "fk_1")
+
+  @@index([bank_id], map: "fk_1")
+}
+
+model jee_quizzes {
+  id                  Int            @id @default(autoincrement())
+  title               String         @db.VarChar(255)
+  duration_minutes    Int?           @default(180)
+  deadline            DateTime?      @db.DateTime(0)
+  target_type         String?        @db.VarChar(50)
+  target_id           Int?
+  question_count      Int?           @default(45)
+  points_per_question Int?           @default(4)
+  bank_ids            Json?
+  created_at          DateTime?      @default(now()) @db.Timestamp(0)
+  jee_attempts        jee_attempts[]
+}
+
+model jobs {
+  id           Int       @id @default(autoincrement())
+  title        String?   @db.VarChar(255)
+  company      String?   @db.VarChar(255)
+  location     String?   @db.VarChar(255)
+  type         String?   @db.VarChar(100)
+  description  String?   @db.Text
+  requirements String?   @db.Text
+  posted_at    DateTime? @db.Date
+  deadline     DateTime? @db.Date
+  created_at   DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model leave_requests {
+  id          Int                    @id @default(autoincrement())
+  user_id     Int
+  leave_type  String?                @db.VarChar(50)
+  start_date  DateTime               @db.Date
+  end_date    DateTime               @db.Date
+  reason      String?                @db.Text
+  status      leave_requests_status? @default(Pending)
+  approved_by Int?
+  remarks     String?                @db.Text
+  created_at  DateTime?              @default(now()) @db.Timestamp(0)
+  student_id  Int?
+}
+
+model notifications {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  title      String    @db.VarChar(255)
+  message    String?   @db.Text
+  type       String?   @default("info") @db.VarChar(50)
+  is_read    Boolean?  @default(false)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model parents {
+  id                 Int      @id @default(autoincrement())
+  name               String?  @db.VarChar(255)
+  email              String?  @db.VarChar(255)
+  phone              String?  @db.VarChar(50)
+  student_id         Int?
+  is_primary_contact Boolean? @default(true)
+  relationship       String?  @db.VarChar(50)
+}
+
+model pylearn_cert_attempts {
+  id               Int       @id @default(autoincrement())
+  user_id          Int
+  certificate_name String    @db.VarChar(255)
+  score            Int
+  passed           Boolean
+  attempted_at     DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model pylearn_cert_questions {
+  id             Int       @id @default(autoincrement())
+  text           String    @db.Text
+  optionA        String    @db.VarChar(255)
+  optionB        String    @db.VarChar(255)
+  optionC        String    @db.VarChar(255)
+  optionD        String    @db.VarChar(255)
+  correct_answer String    @db.VarChar(1)
+  created_at     DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model pylearn_module_stars {
+  user_id       Int
+  module_number Int
+  awarded_at    DateTime? @default(now()) @db.Timestamp(0)
+
+  @@id([user_id, module_number])
+}
+
+model pylearn_task_completions {
+  user_id      Int
+  task_id      Int
+  passed       Boolean?  @default(false)
+  completed_at DateTime? @default(now()) @db.Timestamp(0)
+
+  @@id([user_id, task_id])
+}
+
+model pylearn_tasks {
+  id              Int       @id @default(autoincrement())
+  module_number   Int
+  task_order      Int
+  title           String    @db.VarChar(255)
+  prompt          String    @db.Text
+  starter_code    String?   @db.Text
+  expected_output String?   @db.Text
+  created_at      DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model questions {
+  id             Int                      @id @default(autoincrement())
+  quiz_id        Int
+  question_text  String                   @db.Text
+  question_type  questions_question_type? @default(MCQ)
+  options        Json?
+  correct_answer String?                  @db.Text
+  marks          Int?                     @default(1)
+  created_at     DateTime?                @default(now()) @db.Timestamp(0)
+}
+
+model quizzes {
+  id               Int       @id @default(autoincrement())
+  title            String    @db.VarChar(255)
+  description      String?   @db.Text
+  subject_id       Int?
+  class_id         Int?
+  teacher_id       Int?
+  duration_minutes Int?      @default(30)
+  total_marks      Int?      @default(100)
+  is_published     Boolean?  @default(false)
+  start_time       DateTime? @db.Timestamp(0)
+  end_time         DateTime? @db.Timestamp(0)
+  created_at       DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model rewards {
+  id          Int       @id @default(autoincrement())
+  student_id  Int?
+  type        String?   @db.VarChar(100)
+  points      Int?
+  description String?   @db.Text
+  awarded_by  Int?
+  date        DateTime? @db.Date
+  created_at  DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model sections {
+  id                 Int                 @id @default(autoincrement())
+  name               String              @db.VarChar(50)
+  class_id           Int?
+  capacity           Int?                @default(40)
+  created_at         DateTime?           @default(now()) @db.Timestamp(0)
+  class_teachers_new class_teachers_new?
+  courses            courses[]
+  users              users[]
+}
+
+model subjects {
+  id         Int       @id @default(autoincrement())
+  name       String    @db.VarChar(200)
+  code       String?   @db.VarChar(50)
+  class_id   Int?
+  teacher_id Int?
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model submissions {
+  id            Int       @id @default(autoincrement())
+  quiz_id       Int
+  student_id    Int
+  answers       Json?
+  score         Decimal?  @db.Decimal(5, 2)
+  total_marks   Decimal?  @db.Decimal(5, 2)
+  submitted_at  DateTime? @default(now()) @db.Timestamp(0)
+  graded        Boolean?  @default(false)
+  classwork_id  Int?
+  submission_id String?   @db.VarChar(100)
+  content       String?   @db.Text
+}
+
+model tab_switch_logs {
+  id           Int       @id @default(autoincrement())
+  student_id   String?   @db.VarChar(255)
+  quiz_id      String?   @db.VarChar(255)
+  switch_count Int?      @default(0)
+  log_time     DateTime? @default(now()) @db.Timestamp(0)
+
+  @@unique([student_id, quiz_id], map: "student_quiz_switch")
+}
+
+model teachers_subjects {
+  id         Int       @id @default(autoincrement())
+  teacher_id Int
+  subject_id Int
+  class_id   Int?
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model timetable_entries {
+  id            Int                           @id @default(autoincrement())
+  class_id      Int
+  section       String?                       @db.VarChar(10)
+  subject_id    Int?
+  teacher_id    Int?
+  day_of_week   timetable_entries_day_of_week
+  start_time    DateTime                      @db.Time(0)
+  end_time      DateTime                      @db.Time(0)
+  room          String?                       @db.VarChar(50)
+  created_at    DateTime?                     @default(now()) @db.Timestamp(0)
+  section_id    Int?
+  period_number Int?
+}
+
+model user_badges {
+  id        Int       @id @default(autoincrement())
+  user_id   Int?
+  badge_id  Int?
+  earned_at DateTime? @default(now()) @db.Timestamp(0)
+}
+
+model user_streaks {
+  id             Int       @id @default(autoincrement())
+  user_id        Int?
+  streak_type    String?   @db.VarChar(100)
+  current_streak Int?
+  longest_streak Int?
+  last_activity  DateTime? @db.Date
+}
+
+model users {
+  id                   Int                  @id @default(autoincrement())
+  username             String               @unique(map: "username") @db.VarChar(100)
+  email                String?              @unique(map: "email") @db.VarChar(255)
+  password             String               @db.VarChar(255)
+  role                 users_role           @default(Student)
+  name                 String?              @db.VarChar(255)
+  full_name            String?              @db.VarChar(255)
+  phone                String?              @db.VarChar(20)
+  usn                  String?              @db.VarChar(50)
+  roll_number          String?              @db.VarChar(50)
+  class_id             Int?
+  date_of_birth        DateTime?            @db.Date
+  parent_name          String?              @db.VarChar(255)
+  parent_phone         String?              @db.VarChar(20)
+  parent_email         String?              @db.VarChar(255)
+  address              String?              @db.Text
+  profile_pic          String?              @db.VarChar(500)
+  must_change_password Boolean?             @default(false)
+  is_active            Boolean?             @default(true)
+  created_at           DateTime?            @default(now()) @db.Timestamp(0)
+  updated_at           DateTime?            @default(now()) @db.Timestamp(0)
+  section_id           Int?
+  idno                 String?              @db.VarChar(50)
+  parent_id            Int?
+  gender               String?              @db.VarChar(20)
+  blood_group          String?              @db.VarChar(10)
+  previous_school      String?              @db.VarChar(255)
+  date_of_admission    DateTime?            @db.Date
+  department           String?              @db.VarChar(255)
+  year                 String?              @db.VarChar(50)
+  class_teachers_new   class_teachers_new[]
+  jee_attempts         jee_attempts[]
+  jee_proctor_flags    jee_proctor_flags[]
+  sections             sections?            @relation(fields: [section_id, section_id, section_id, section_id, section_id, section_id], references: [id, id, id, id, id, id], onDelete: Cascade, onUpdate: NoAction, map: "fk_1")
+
+  @@index([section_id], map: "fk_1")
+}
+
+model webhooks {
+  id         Int       @id @default(autoincrement())
+  url        String    @db.VarChar(255)
+  events     Json
+  secret     String?   @db.VarChar(255)
+  created_at DateTime? @default(now()) @db.Timestamp(0)
+  created_by String?   @db.VarChar(255)
+}
+
+enum questions_question_type {
+  MCQ
+  True_False   @map("True/False")
+  Short_Answer @map("Short Answer")
+}
+
+enum users_role {
+  Admin
+  Teacher
+  Student
+}
+
+enum attendance_status {
+  Present
+  Absent
+  Late
+  Excused
+}
+
+enum timetable_entries_day_of_week {
+  Monday
+  Tuesday
+  Wednesday
+  Thursday
+  Friday
+  Saturday
+}
+
+enum leave_requests_status {
+  Pending
+  Approved
+  Rejected
+}
+
+enum announcements_priority {
+  Low
+  Normal
+  High
+  Urgent
+}

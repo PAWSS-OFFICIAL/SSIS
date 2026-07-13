@@ -1077,7 +1077,9 @@ async def create_user(user: UserCreate, token: dict = Depends(require_role('Admi
             if user.role == "Student":
                 import datetime
                 current_year = datetime.datetime.now().year
-                raw_pw = f"SSIS{current_year}{user.idno}"
+                raw_pw = str(user.idno)
+                if not raw_pw.upper().startswith("SSIS"):
+                    raw_pw = f"SSIS{current_year}{raw_pw}"
                 hashed_password = bcrypt.hashpw(raw_pw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                 final_username = user.name.replace(' ', '').lower()
             else:
@@ -1387,7 +1389,9 @@ async def bulk_upload_students(
                     
                     import datetime
                     current_year = datetime.datetime.now().year
-                    raw_pw = f"SSIS{current_year}{usn}"
+                    raw_pw = str(usn)
+                    if not raw_pw.upper().startswith("SSIS"):
+                        raw_pw = f"SSIS{current_year}{raw_pw}"
                     student_hashed_pw = bcrypt.hashpw(raw_pw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                     
                     # Apply Overrides or fallbacks

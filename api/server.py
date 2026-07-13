@@ -1072,14 +1072,23 @@ async def create_user(user: UserCreate, token: dict = Depends(require_role('Admi
                 if cursor.fetchone():
                     raise HTTPException(status_code=400, detail=f"Roll Number {user.idno} is already taken")
 
-            hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            final_username = user.username
+            if user.role == "Student":
+                import datetime
+                current_year = datetime.datetime.now().year
+                raw_pw = f"SSIS{current_year}{user.idno}"
+                hashed_password = bcrypt.hashpw(raw_pw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                final_username = user.name.replace(' ', '').lower()
+            else:
+                hashed_password = bcrypt.hashpw(user.password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+            
             try:
                 cursor.execute("""
                 INSERT INTO users (username, email, password, role, name, idno, class_id, section_id,
                                    parent_id, date_of_birth, gender, blood_group, address,
                                    previous_school, date_of_admission, phone)
                 VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-                """, (user.username, user.email, hashed_password, user.role, user.name,
+                """, (final_username, user.email, hashed_password, user.role, user.name,
                       user.idno, user.class_id, user.section_id, user.parent_id,
                       user.date_of_birth, user.gender, user.blood_group, user.address,
                       user.previous_school, user.date_of_admission, user.phone))
@@ -1375,7 +1384,10 @@ async def bulk_upload_students(
                     email = f"{usn.lower()}@ssis.edu.in"
                     username = row_dict['student_name'].replace(' ', '').lower()
                     
-                    student_hashed_pw = bcrypt.hashpw(usn.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                    import datetime
+                    current_year = datetime.datetime.now().year
+                    raw_pw = f"SSIS{current_year}{usn}"
+                    student_hashed_pw = bcrypt.hashpw(raw_pw.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                     
                     # Apply Overrides or fallbacks
                     final_dept = department if department else row_dict.get('department')

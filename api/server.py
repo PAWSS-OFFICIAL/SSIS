@@ -478,9 +478,10 @@ async def login(request: Request, login_data: LoginRequest):
         # Use request object for rate limiting
         with get_db_connection() as conn:
             with conn.cursor() as cursor:
+                identifier = login_data.identifier.lower() if login_data.identifier else ""
                 cursor.execute("""
                     SELECT * FROM users WHERE username = %s OR email = %s
-                """, (login_data.identifier, login_data.identifier))
+                """, (identifier, identifier))
                 user = cursor.fetchone()
                 
                 if not user:

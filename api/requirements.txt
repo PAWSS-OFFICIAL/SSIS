@@ -48,3 +48,6 @@ reportlab==4.2.0
 
 # Caching
 redis==5.0.3
+
+# Word document parsing
+python-docx==1.1.2

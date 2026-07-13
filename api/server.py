@@ -1353,9 +1353,9 @@ async def bulk_upload_students(
     students_created = 0
     parents_created = 0
     errors = []
-    default_password = "123456789"
-    hashed = bcrypt.hashpw(default_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
-    
+    students_created = 0
+    parents_created = 0
+    errors = []
     with get_db_connection() as conn:
         with conn.cursor() as cursor:
             for row_idx, row in enumerate(sheet.iter_rows(min_row=2, values_only=True), start=2):
@@ -1368,7 +1368,9 @@ async def bulk_upload_students(
                     usn = str(row_dict['usn']).upper()
                     usn_digits = ''.join(filter(str.isdigit, usn))[-5:]  # Last 5 digits
                     email = f"{usn.lower()}@ssis.edu.in"
-                    username = row_dict['student_name'].replace(' ', '.').lower()
+                    username = row_dict['student_name'].replace(' ', '').lower()
+                    
+                    student_hashed_pw = bcrypt.hashpw(usn.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
                     
                     # Apply Overrides or fallbacks
                     final_dept = department if department else row_dict.get('department')
@@ -1383,7 +1385,7 @@ async def bulk_upload_students(
                     cursor.execute("""
                         INSERT INTO users (username, email, password, role, name, idno, department, year, section)
                         VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
-                    """, (username, email, hashed, 'Student', 
+                    """, (username, email, student_hashed_pw, 'Student', 
                           row_dict['student_name'], usn, final_dept, final_year, final_section))
                     student_id = cursor.lastrowid
                     students_created += 1
@@ -1395,7 +1397,7 @@ async def bulk_upload_students(
                     cursor.execute("""
                         INSERT INTO users (username, email, password, role, name, parent_id)
                         VALUES (%s, %s, %s, %s, %s, %s)
-                    """, (parent_username, parent_email, hashed, 'Parent', 
+                    """, (parent_username, parent_email, student_hashed_pw, 'Parent', 
                           f"Parent of {row_dict['student_name']}", student_id))
                     parents_created += 1
                     

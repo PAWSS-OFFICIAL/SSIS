@@ -494,7 +494,11 @@ export const AdminDashboard = () => {
                                 <Label>Roll Number <span className="text-red-500">*</span></Label>
                                 <Input
                                   value={newUser.idno}
-                                  onChange={(e) => setNewUser({ ...newUser, idno: e.target.value })}
+                                  onChange={(e) => setNewUser({ 
+                                    ...newUser, 
+                                    idno: e.target.value,
+                                    password: newUser.role === "Student" ? e.target.value : newUser.password
+                                  })}
                                   placeholder="R0001"
                                   required
                                 />

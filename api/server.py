@@ -179,8 +179,13 @@ app.add_middleware(SecurityHeadersMiddleware)
 # Note: With credentials=False, we can use wildcard. Auth is via Bearer token in header.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=False,  # Must be False when using wildcard origin
+    allow_origins=[
+        "https://ssis-lms.pages.dev",
+        "http://localhost:3000",
+        "http://localhost:8000"
+    ],
+    allow_origin_regex=r"https://.*\.ssis-lms\.pages\.dev|https://ssis-lms\.pages\.dev",
+    allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )

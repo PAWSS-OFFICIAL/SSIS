@@ -143,7 +143,7 @@ export const ChatbotWidget = () => {
                 <Bot className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-semibold">JAIN Assistant</h3>
+                <h3 className="font-semibold">PAWSS Assistant</h3>
                 <p className="text-xs text-slate-300">Online 24/7</p>
               </div>
             </div>

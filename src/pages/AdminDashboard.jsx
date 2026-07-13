@@ -60,18 +60,6 @@ export const AdminDashboard = () => {
   const [showLinkParent, setShowLinkParent] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(null);
 
-  useEffect(() => {
-    if (showAddUser && newUser.role === "Student") {
-      const studentCount = users.filter(u => u.role === "Student").length;
-      const currentYear = new Date().getFullYear();
-      const nextRoll = `SSIS${currentYear}${studentCount + 1}`;
-      setNewUser(prev => ({
-        ...prev,
-        idno: prev.idno || nextRoll,
-        password: prev.password === "123456789" ? nextRoll : prev.password
-      }));
-    }
-  }, [showAddUser, newUser.role, users]);
 
   // New user form
   const [newUser, setNewUser] = useState({
@@ -97,6 +85,19 @@ export const AdminDashboard = () => {
     guardian: { name: "", phone: "", email: "" },
     primary_contact: "Father",
   });
+
+  useEffect(() => {
+    if (showAddUser && newUser.role === "Student") {
+      const studentCount = users.filter(u => u.role === "Student").length;
+      const currentYear = new Date().getFullYear();
+      const nextRoll = `SSIS${currentYear}${studentCount + 1}`;
+      setNewUser(prev => ({
+        ...prev,
+        idno: prev.idno || nextRoll,
+        password: prev.password === "123456789" ? nextRoll : prev.password
+      }));
+    }
+  }, [showAddUser, newUser.role, users]);
 
   // Bulk upload settings
   const [bulkSettings, setBulkSettings] = useState({

@@ -78,10 +78,13 @@ export const LoginPage = () => {
     <div className="min-h-screen flex">
       {/* Left Panel - Image */}
       <div className="hidden lg:flex lg:w-1/2 relative bg-[#1a365d] overflow-hidden">
-        <img
-          src="/campus-building.jpg"
-          alt="SSIS Campus"
+        <video
+          src="/vdo/videoplayback.mp4"
           className="absolute inset-0 w-full h-full object-cover opacity-60"
+          autoPlay
+          muted
+          loop
+          playsInline
         />
         <div className="relative z-10 flex flex-col justify-center px-12 text-white">
           <img src="/logo.jpg" alt="School Logo" className="w-20 h-20 mb-8 drop-shadow-lg" />
